@@ -1,0 +1,119 @@
+header {
+    width: 100%;
+    height: 3rem;
+    display: flex;
+    justify-content: space-between;
+    background-color: #9b9b9b;
+    color: white;
+    box-sizing: border-box;
+}
+
+header .spacing {
+    flex: 1;
+}
+
+header a {
+    display: flex;
+    align-items: center;
+    height: 100%;
+}
+
+header #site-name {
+    padding: 0 1rem;
+    text-decoration: none;
+    color: white;
+}
+
+header #profile {
+    padding: 0 0.6rem;
+    text-decoration: none;
+    color: white;
+    display: flex;
+    align-items: center;
+}
+
+header #profile img {
+    width: 2rem;
+    height: 2rem;
+    border: 1px solid black;
+    border-radius: 50%;
+    margin-right: 0.3rem;
+}
+
+header #notifications {
+    padding: 0 0.6rem;
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+header #notifications img {
+    width: 1.8rem;
+    height: 1.8rem;
+}
+
+header #notifications:hover {
+    background-color: #8f8e8e;
+}
+
+header #profile:hover {
+    background-color: #8f8e8e;
+}
+
+header #site-name:hover {
+    background-color: #8f8e8e;
+}
+
+@media (min-width: 480px) {
+
+}
+
+@media (min-width: 768px) {
+    header {
+        height: 3.6rem;
+    }
+
+    header #profile img {
+        width: 2.3rem;
+        height: 2.3rem;
+        margin-right: 0.5rem;
+    }
+
+    header #notifications {
+        padding: 0 0.8rem;
+    }
+
+    header #notifications img {
+        width: 2.3rem;
+        height: 2.3rem;
+    }   
+}
+
+@media (min-width: 1024px) {
+
+    header {
+        height: 4rem;
+    }
+
+    header #site-name {
+        padding: 0 2rem;
+    }
+
+    header #profile {
+        padding: 0 1rem;
+    }
+    
+    header #profile img {
+        width: 2.8rem;
+        height: 2.8rem;
+    }
+
+    header #notifications img {
+        width: 2.6rem;
+        height: 2.6rem;
+    }
+}
+
+@media (min-width: 1440px) {
+
+}

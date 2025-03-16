@@ -1,0 +1,123 @@
+#notifications-popup {
+    padding: 0 1rem;
+    padding-top: 1rem;
+    display: none;
+    position: absolute;
+    top: 40px;
+    left: 50%;
+    width: 90%;
+    transform: translateX(-50%);
+    z-index: 10;
+    background-color: white;
+    border: 2px solid lightgray;
+    overflow: hidden;
+}
+
+#notification-icon {
+    transition: opacity 0.3s ease-in-out;
+}
+
+#notifications-popup {
+    margin-top: 1rem;
+}
+
+.notification img {
+    width: 4rem;
+    height: 4rem;
+    border-radius: 50%;
+    border: 2px solid black;
+}
+
+.notification p {
+    padding: 1rem;
+    text-align: center;
+    width: 100%;
+    background-color: lightgray;
+    margin-top: 0rem;
+    margin-bottom: 2rem;
+    margin-left: 3rem;
+    border-radius: 10px;
+}
+
+.notification div p {
+    padding: 0;
+    background-color: white;
+    margin-top: 0;
+    margin-bottom: 1rem;
+    margin-left: 0;
+}
+
+header {
+    position: relative;
+}
+
+#notifications:hover + #notifications-popup {
+    display: block;
+}
+
+.notification {
+    text-align: center;
+    display: flex;
+    justify-content: left;
+}
+
+@media screen and (min-width: 1024px) {
+    #notifications-popup {
+        display: none;
+        position: absolute;
+        top: 60px;
+        right: 10px;
+        left: auto;
+        transform: none;
+        width: 30%;
+        z-index: 10;
+        background-color: white;
+        border: 2px solid lightgray;
+        overflow: hidden;
+    }
+
+    #notifications-popup {
+        margin-top: 1rem;
+    }
+
+    .notification img {
+        width: 4rem;
+        height: 4rem;
+        border-radius: 50%;
+        border: 2px solid black;
+    }
+
+    .notification p {
+        padding: 1rem;
+        text-align: center;
+        width: 100%;
+        background-color: lightgray;
+        margin-top: 0rem;
+        margin-bottom: 2rem;
+        margin-left: 3rem;
+        border-radius: 10px;
+    }
+
+    .notification div p {
+        padding: 0;
+        background-color: white;
+        margin-top: 0;
+        margin-bottom: 1rem;
+        margin-left: 0;
+    }
+
+    header {
+        position: relative;
+    }
+
+    #notifications:hover + #notifications-popup {
+        display: block;
+    }
+
+    .notification {
+        text-align: center;
+        display: flex;
+        justify-content: left;
+    }
+    
+}

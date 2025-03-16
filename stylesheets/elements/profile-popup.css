@@ -1,0 +1,47 @@
+#profile-popup {
+    display: none;
+    position: absolute;
+    right: 5px;
+    top: 55px;
+    width: 40%;
+    padding-top: 1rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    z-index: 10;
+    background-color: white;
+    border: 2px solid lightgray;
+    overflow: hidden;
+}
+header {
+    position: relative;
+}
+
+#profile-popup .popup-body a {
+    text-decoration: none;
+    color: black;
+    display: block;
+    margin-bottom: 1rem;
+}
+
+@media screen and (min-width: 480px) {
+    #profile-popup {
+        width: 25%;
+    }    
+
+}
+
+@media screen and (min-width: 768px) {
+    #profile-popup {
+        top: 70px;
+        right: 10px;
+        width: 20%;
+    }  
+}
+
+@media screen and (min-width: 1024px) {
+    #profile-popup {
+        right: 10px;
+        top: 75px;
+        width: 12%; 
+    }
+}

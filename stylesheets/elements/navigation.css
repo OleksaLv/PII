@@ -1,0 +1,101 @@
+nav {
+    width: 100%;
+    height: 3rem;
+    box-sizing: border-box;
+}
+
+nav ul {
+    height: 100%;
+    padding: 0;
+    margin: 0;
+    list-style-type: none;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+nav ul li {
+    flex: 1;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+nav ul li a {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+    color: black;
+    font-size: 1rem;
+}
+
+nav ul li a:hover {
+    background-color: #f0f0f0;
+}
+
+@media (min-width: 480px) {
+
+}
+
+@media (min-width: 768px) {
+ 
+}
+
+@media (min-width: 1024px) {
+    nav {
+        height: 100%;
+        width: 18rem;
+        min-width: 18rem;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        overflow-y: auto;
+    }
+    
+    nav ul {
+        margin-top: 1.5rem;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+    }
+      
+    nav ul li {
+        width: 100%;
+        height: 2.5rem;
+        flex: 0 0 2.5rem;
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+    }
+    
+    nav ul li a {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        padding-left: 3rem;
+        justify-content: flex-start;
+        align-items: center;
+    }
+}
+
+@media (min-width: 1440px) {
+    nav {
+        width: 20rem;
+        min-width: 20rem;
+    }
+
+    nav ul {
+        margin-top: 2.5rem;
+    }
+
+    nav ul li {
+        height: 2.8rem;
+        flex: 0 0 2.8rem;
+    }
+}
