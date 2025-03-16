@@ -1,0 +1,38 @@
+[
+  {
+    "checkbox": false,
+    "group": "PZ-34",
+    "name": "Yurii Stelmakh",
+    "gender": "M",
+    "birthday": "01.01.2006",
+    "status": "offline",
+    "options": {
+      "edit": true,
+      "delete": "Yurii Stelmakh"
+    }
+  },
+  {
+    "checkbox": false,
+    "group": "PZ-35",
+    "name": "Andrii Potikha",
+    "gender": "F",
+    "birthday": "02.01.2006",
+    "status": "offline",
+    "options": {
+      "edit": true,
+      "delete": "Andrii Potikha"
+    }
+  },
+  {
+    "checkbox": false,
+    "group": "PZ-34",
+    "name": "Oleksii Mahinskyi",
+    "gender": "F",
+    "birthday": "03.01.2006",
+    "status": "offline",
+    "options": {
+      "edit": true,
+      "delete": "Oleksii Mahinskyi"
+    }
+  }
+]
