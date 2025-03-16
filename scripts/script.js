@@ -60,18 +60,34 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     confirmDelete.addEventListener('click', function() {
-        if (currentRow) {
-            // Remove the student from the local data
-            studentsData = studentsData.filter(student => student.name !== currentStudentName);
+        const rows = table.querySelectorAll('tr:not(:first-child)');
+            const checkedRows = Array.from(rows).filter(row => {
+            return row.querySelector('.student-checkbox').checked;
+        });
 
-            // Simulate saving the updated data to Students.json
-            console.log('Updated Students.json:', JSON.stringify(studentsData, null, 2));
+        if(checkedRows.length > 1) {
+            //Remove the students from the local data
+            checkedRows.forEach(row => {
+                const studentName = row.cells[2].textContent;
+                studentsData = studentsData.filter(student => student.name !== studentName);
 
-            // Remove the row from the table
-            currentRow.remove();
+                row.remove();
+            });
             currentStudentName = '';
             currentRow = null;
+        } else if (currentRow) {
+             // Remove the student from the local data
+             studentsData = studentsData.filter(student => student.name !== currentStudentName);
+ 
+             // Remove the row from the table
+             currentRow.remove();
+             currentStudentName = '';
+             currentRow = null;
         }
+
+        // Simulate saving the updated data to Students.json
+        console.log('Updated Students.json:', JSON.stringify(studentsData, null, 2));        
+
         deleteModal.style.display = 'none';
     });
 
@@ -230,6 +246,33 @@ document.addEventListener('DOMContentLoaded', function() {
         notificationIcon.style.opacity = 1;
     }, 2000);
 
+    function addStudentToTable(student) {    
+
+        //Online status if the student is the current user
+        if(student.name === profileName){
+            student.status = 'online';
+        }
+        else{ 
+            student.status = 'offline';
+        }
+
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td><input type="checkbox" class="student-checkbox"></td>
+            <td>${student.group}</td>
+            <td>${student.name}</td>
+            <td>${student.gender}</td>
+            <td>${student.birthday}</td>
+            <td><div class="${student.status}"></div></td>
+            <td>
+                <button class="edit-btn"><img src="icons/edit.png" alt="edit"></button>
+                <button class="delete-btn" data-name="${student.name}"><img src="icons/delete.png" alt="delete"></button>
+            </td>
+        `;
+
+        table.appendChild(row);
+        return row;
+    }
     
     function addEditDelListeners(row) {
         row.querySelector('.edit-btn').addEventListener('click', function() {
@@ -274,41 +317,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 alert('Select it first');
                 return;
             }
-            currentStudentName = this.getAttribute('data-name');
             currentRow = row;
+            const allCheckboxes = document.querySelectorAll('.student-checkbox');
+            const allChecked = Array.from(allCheckboxes).filter(cb => cb.checked);
+            allChecked.length === 1 ? currentStudentName = this.getAttribute('data-name') : currentStudentName = 'ALL selected students';           
+
             deleteMessage.textContent = `Are you sure you want to delete ${currentStudentName}?`;
             deleteModal.style.display = 'block';
         });
     }
 
-    function addStudentToTable(student) {    
-
-        //Online status if the student is the current user
-        if(student.name === profileName){
-            student.status = 'online';
-        }
-        else{ 
-            student.status = 'offline';
-        }
-
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            <td><input type="checkbox" class="student-checkbox"></td>
-            <td>${student.group}</td>
-            <td>${student.name}</td>
-            <td>${student.gender}</td>
-            <td>${student.birthday}</td>
-            <td><div class="${student.status}"></div></td>
-            <td>
-                <button class="edit-btn"><img src="icons/edit.png" alt="edit"></button>
-                <button class="delete-btn" data-name="${student.name}"><img src="icons/delete.png" alt="delete"></button>
-            </td>
-        `;
-
-        table.appendChild(row);
-        return row;
-    }
-    
     function addCheckboxListener(checkbox){
         checkbox.addEventListener('change', function() {
             if (!this.checked) {
