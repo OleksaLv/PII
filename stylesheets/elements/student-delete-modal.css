@@ -13,6 +13,7 @@
 }
 
 .modal-content {
+    box-sizing: border-box;
     background-color: #fefefe;
     margin: 10% auto;
     border: 2px solid black;
@@ -44,13 +45,14 @@
     height: 2.5rem;
 }
 
-.modal-footer button {
+.modal-footer button:not(:last-child) {
+    margin-right: 0.3rem;
     width: 4.5rem;
 }
+
 .modal-footer {
     display: flex;
-    justify-content: right;
-    gap: 1rem;
+    justify-content: flex-end;
     padding: 1rem;
 }
 

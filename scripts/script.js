@@ -320,7 +320,7 @@ document.addEventListener('DOMContentLoaded', function() {
             currentRow = row;
             const allCheckboxes = document.querySelectorAll('.student-checkbox');
             const allChecked = Array.from(allCheckboxes).filter(cb => cb.checked);
-            allChecked.length === 1 ? currentStudentName = this.getAttribute('data-name') : currentStudentName = 'ALL selected students';           
+            currentStudentName = allChecked.length === 1 ? this.getAttribute('data-name') :'ALL selected students';           
 
             deleteMessage.textContent = `Are you sure you want to delete ${currentStudentName}?`;
             deleteModal.style.display = 'block';

@@ -33,6 +33,7 @@ header #profile {
 }
 
 header #profile img {
+    box-sizing: border-box;
     width: 2rem;
     height: 2rem;
     border: 1px solid black;
@@ -48,8 +49,8 @@ header #notifications {
 }
 
 header #notifications img {
-    width: 1.8rem;
-    height: 1.8rem;
+    width: 1.7rem;
+    height: 1.7rem;
 }
 
 header #notifications:hover {
@@ -84,8 +85,8 @@ header #site-name:hover {
     }
 
     header #notifications img {
-        width: 2.3rem;
-        height: 2.3rem;
+        width: 2.2rem;
+        height: 2.2rem;
     }   
 }
 
@@ -109,8 +110,8 @@ header #site-name:hover {
     }
 
     header #notifications img {
-        width: 2.6rem;
-        height: 2.6rem;
+        width: 2.5rem;
+        height: 2.5rem;
     }
 }
 

@@ -1,4 +1,5 @@
 #notifications-popup {
+    box-sizing: border-box;
     padding: 0 1rem;
     padding-top: 1rem;
     display: none;
@@ -22,6 +23,7 @@
 }
 
 .notification img {
+    box-sizing: border-box;
     width: 4rem;
     height: 4rem;
     border-radius: 50%;
@@ -29,11 +31,12 @@
 }
 
 .notification p {
+    box-sizing: border-box;
     padding: 1rem;
     text-align: center;
     width: 100%;
     background-color: lightgray;
-    margin-top: 0rem;
+    margin-top: 0;
     margin-bottom: 2rem;
     margin-left: 3rem;
     border-radius: 10px;
@@ -51,73 +54,18 @@ header {
     position: relative;
 }
 
-#notifications:hover + #notifications-popup {
-    display: block;
-}
-
 .notification {
     text-align: center;
     display: flex;
-    justify-content: left;
+    justify-content: flex-start;
 }
 
 @media screen and (min-width: 1024px) {
     #notifications-popup {
-        display: none;
-        position: absolute;
         top: 60px;
         right: 10px;
         left: auto;
         transform: none;
         width: 30%;
-        z-index: 10;
-        background-color: white;
-        border: 2px solid lightgray;
-        overflow: hidden;
     }
-
-    #notifications-popup {
-        margin-top: 1rem;
-    }
-
-    .notification img {
-        width: 4rem;
-        height: 4rem;
-        border-radius: 50%;
-        border: 2px solid black;
-    }
-
-    .notification p {
-        padding: 1rem;
-        text-align: center;
-        width: 100%;
-        background-color: lightgray;
-        margin-top: 0rem;
-        margin-bottom: 2rem;
-        margin-left: 3rem;
-        border-radius: 10px;
-    }
-
-    .notification div p {
-        padding: 0;
-        background-color: white;
-        margin-top: 0;
-        margin-bottom: 1rem;
-        margin-left: 0;
-    }
-
-    header {
-        position: relative;
-    }
-
-    #notifications:hover + #notifications-popup {
-        display: block;
-    }
-
-    .notification {
-        text-align: center;
-        display: flex;
-        justify-content: left;
-    }
-    
 }
