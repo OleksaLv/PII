@@ -256,9 +256,13 @@ document.addEventListener('DOMContentLoaded', function() {
             student.status = 'offline';
         }
 
+        const cssFormatedName = student.name.toLowerCase().replace(' ', '-');
         const row = document.createElement('tr');
         row.innerHTML = `
-            <td><input type="checkbox" class="student-checkbox"></td>
+            <td>
+                <label for="${cssFormatedName}-checkbox" class="visually-hidden">Select ${cssFormatedName}</label>
+                <input type="checkbox" class="student-checkbox" id="${cssFormatedName}-checkbox">
+            </td>
             <td>${student.group}</td>
             <td>${student.name}</td>
             <td>${student.gender}</td>

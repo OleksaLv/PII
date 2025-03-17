@@ -3,7 +3,7 @@ header {
     height: 3rem;
     display: flex;
     justify-content: space-between;
-    background-color: #9b9b9b;
+    background-color: #5f5f5f;
     color: white;
     box-sizing: border-box;
 }
@@ -54,15 +54,15 @@ header #notifications img {
 }
 
 header #notifications:hover {
-    background-color: #8f8e8e;
+    background-color: #525252;
 }
 
 header #profile:hover {
-    background-color: #8f8e8e;
+    background-color: #525252;
 }
 
 header #site-name:hover {
-    background-color: #8f8e8e;
+    background-color: #525252;
 }
 
 @media (min-width: 480px) {
