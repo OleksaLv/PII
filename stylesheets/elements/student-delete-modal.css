@@ -41,6 +41,11 @@
 }
 
 .modal button {
+    width: 4rem;
+    height: 3rem;
+}
+
+.modal button#close-modal-window, .modal button#close-del-window{
     width: 2.5rem;
     height: 2.5rem;
 }
@@ -84,10 +89,15 @@
 }
 
 @media (min-width: 768px) {
+    #delete-modal .modal-content {
+        width: 50%;
+    }
+
     .modal button {
-        width: 2.5rem;
+        width: 3rem;
         height: 2.5rem;
     }
+
     .modal-footer button {
         width: 4.5rem;
     }
@@ -98,10 +108,13 @@
 }
 
 @media (min-width: 1024px) {
-    .modal-content {
-        width: 70%;
+    #delete-modal .modal-content {
+        width: 40%;
     }
 
+    #student-modal .modal-content {
+        width: 50%;
+    }
 }
 
 @media (min-width: 1440px) {
