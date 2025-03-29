@@ -1,52 +1,44 @@
 #profile-popup {
-    box-sizing: border-box;
-    display: none;
-    position: absolute;
-    right: 5px;
-    top: 55px;
-    width: 40%;
-    z-index: 10;
-    background-color: white;
-    border: 2px solid lightgray;
-    overflow: hidden;
-}
-header {
-    position: relative;
+    top: 3rem;
+    right: 0;
+    width: 200px;
 }
 
-#profile-popup .popup-body a {
-    height: 3rem;
+#profile-popup .popup-body {
+    border-color: var(--neon-blue);
+    box-shadow: 0 0 15px var(--neon-blue);
     display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    padding-left: 2rem;
-    text-decoration: none;
-    color: black;
+    flex-direction: column;
 }
 
-#profile-popup .popup-body a:hover {
-    background-color: #f0f0f0;
+#profile-popup a {
+    padding: 0.8rem;
+    color: var(--neon-green);
+    text-align: center;
+    border-bottom: 1px solid rgba(0, 255, 0, 0.3);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    transition: all 0.2s;
 }
 
-@media screen and (min-width: 480px) {
+#profile-popup a:last-child {
+    border-bottom: none;
+}
+
+#profile-popup a:hover {
+    background-color: rgba(0, 255, 0, 0.1);
+    text-shadow: 0 0 5px var(--neon-green);
+}
+
+@media (min-width: 768px) {
     #profile-popup {
-        width: 25%;
-    }    
-
+        top: 3.6rem;
+    }
 }
 
-@media screen and (min-width: 768px) {
+@media (min-width: 1024px) {
     #profile-popup {
-        top: 70px;
-        right: 10px;
-        width: 20%;
-    }  
-}
-
-@media screen and (min-width: 1024px) {
-    #profile-popup {
-        right: 10px;
-        top: 75px;
-        width: 10%; 
+        top: 4rem;
+        width: 220px;
     }
 }

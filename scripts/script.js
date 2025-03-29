@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .catch(error => console.error('Error loading student data:', error));
 
-    // Delete modal logic
+    //Delete modal logic
     cancelDelete.addEventListener('click', function() {
         deleteModal.style.display = 'none';
     });
@@ -76,16 +76,16 @@ document.addEventListener('DOMContentLoaded', function() {
             currentStudentName = '';
             currentRow = null;
         } else if (currentRow) {
-             // Remove the student from the local data
+             //Remove the student from the local data
              studentsData = studentsData.filter(student => student.name !== currentStudentName);
  
-             // Remove the row from the table
+             //Remove the row from the table
              currentRow.remove();
              currentStudentName = '';
              currentRow = null;
         }
 
-        // Simulate saving the updated data to Students.json
+        //Simulate saving the updated data to Students.json
         console.log('Updated Students.json:', JSON.stringify(studentsData, null, 2));        
 
         deleteModal.style.display = 'none';
@@ -113,12 +113,12 @@ document.addEventListener('DOMContentLoaded', function() {
     
     confirmModal.addEventListener('click', function() {
         if (modalGroupField.value && modalFirstNameField.value && modalLastNameField.value && modalGenderField.value && modalBirthdayField.value) {
-            // Convert birthday format from yyyy-mm-dd to dd.mm.yyyy
+            //Convert birthday format from yyyy-mm-dd to dd.mm.yyyy
             const birthdayParts = modalBirthdayField.value.split('-');
             const formattedBirthday = `${birthdayParts[2]}.${birthdayParts[1]}.${birthdayParts[0]}`;
             
             if (currentModalOperation === 'add') {
-                // Add new student
+                //Add new student
                 const newStudent = {
                     group: modalGroupField.value,
                     name: `${modalFirstNameField.value} ${modalLastNameField.value}`,
@@ -127,29 +127,29 @@ document.addEventListener('DOMContentLoaded', function() {
                     status: 'offline'
                 };
                 
-                // Add the new student to the local data
+                //Add the new student to the local data
                 studentsData.push(newStudent);
     
-                // Simulate saving the updated data to Students.json
+                //Simulate saving the updated data to Students.json
                 console.log('Updated Students.json:', JSON.stringify(studentsData, null, 2));
     
-                // Add the new student to the table and get the row
+                //Add the new student to the table and get the row
                 const newRow = addStudentToTable(newStudent);
     
-                // Add event listener to the new checkbox
+                //Add event listener to the new checkbox
                 const newCheckbox = newRow.querySelector('.student-checkbox');
                 addCheckboxListener(newCheckbox);
                 
-                // Check new checkbox if all checkboxes are checked
+                //Check new checkbox if all checkboxes are checked
                 if(document.getElementById('select-all').checked){
                     newCheckbox.checked = true;
                 }
     
-                // Add event listeners to the new buttons
+                //Add event listeners to the new buttons
                 addEditDelListeners(newRow);
                 
             } else if (currentModalOperation === 'edit') {
-                // Check if any data has changed
+                //Check if any data has changed
                 if (
                     modalGroupField.value === originalData.group &&
                     modalFirstNameField.value === originalData.firstName &&
@@ -157,12 +157,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     modalGenderField.value === originalData.gender &&
                     formattedBirthday === originalData.birthday
                 ) {
-                    // No changes made, just close the modal
+                    //No changes made, just close the modal
                     studentModal.style.display = 'none';
                     return;
                 }
                 
-                // Update the student
+                //Update the student
                 const studentIndex = studentsData.findIndex(student => 
                     student.name === `${originalData.firstName} ${originalData.lastName}`);
                 
@@ -172,32 +172,32 @@ document.addEventListener('DOMContentLoaded', function() {
                         name: `${modalFirstNameField.value} ${modalLastNameField.value}`,
                         gender: modalGenderField.value === 'Male' ? 'M' : 'F',
                         birthday: formattedBirthday,
-                        status: studentsData[studentIndex].status // Keep the original status
+                        status: studentsData[studentIndex].status //Keep the original status
                     };
 
-                    // Update the table row
+                    //Update the table row
                     currentRow.cells[1].textContent = modalGroupField.value;
                     currentRow.cells[2].textContent = `${modalFirstNameField.value} ${modalLastNameField.value}`;
                     currentRow.cells[3].textContent = modalGenderField.value === 'Male' ? 'M' : 'F';
                     currentRow.cells[4].textContent = formattedBirthday;
                     
-                    // Update delete button data-name attribute
+                    //Update delete button data-name attribute
                     currentRow.querySelector('.delete-btn').setAttribute('data-name', 
                         `${modalFirstNameField.value} ${modalLastNameField.value}`);
 
-                    // Simulate saving the updated data to Students.json
+                    //Simulate saving the updated data to Students.json
                     console.log('Updated Students.json:', JSON.stringify(studentsData, null, 2));
                 }
             }
             
-            // Hide the modal
+            //Hide the modal
             studentModal.style.display = 'none';
         } else {
             alert('Please fill in all required fields.');
         }
     });
 
-    // Notification popup
+    //Notification popup
     const notifications = document.getElementById('notifications');
     const notificationsPopup = document.getElementById('notifications-popup');
 
@@ -210,7 +210,7 @@ document.addEventListener('DOMContentLoaded', function() {
         notificationsPopup.style.display = 'none';
     });
 
-    // Profile popup
+    //Profile popup
     const profile = document.getElementById('profile');
     const profilePopup = document.getElementById('profile-popup');
 
@@ -223,29 +223,7 @@ document.addEventListener('DOMContentLoaded', function() {
         profilePopup.style.display = 'none';
     });
 
-    //Notification icon animation
-    const notificationIcon = document.getElementById('notification-icon');
-    const icons = ['icons/bell.png', 'icons/bell-active.png'];
-    let currentIconIndex = 0;
-
-    const switchIcon = () => {
-        notificationIcon.style.opacity = 0; 
-        setTimeout(() => { //Wait for 0.3 seconds and then show other icon
-            currentIconIndex = (currentIconIndex + 1) % icons.length;
-            notificationIcon.src = icons[currentIconIndex];
-            notificationIcon.style.opacity = 1;
-        }, 300);
-    };
-
-    const intervalId = setInterval(switchIcon, 600); //Do SeitchIcon every 0.6 seconds
-
-    setTimeout(() => {
-        clearInterval(intervalId); //Stop animation after 2 seconds
-        currentIconIndex = 0;
-        notificationIcon.src = icons[0]; 
-        notificationIcon.style.opacity = 1;
-    }, 2000);
-
+    //Functions
     function addStudentToTable(student) {    
 
         //Online status if the student is the current user
@@ -269,8 +247,8 @@ document.addEventListener('DOMContentLoaded', function() {
             <td>${student.birthday}</td>
             <td><div class="${student.status}"></div></td>
             <td>
-                <button class="edit-btn"><img src="icons/edit.png" alt="edit"></button>
-                <button class="delete-btn" data-name="${student.name}"><img src="icons/delete.png" alt="delete"></button>
+                <button class="edit-btn">✎</button>
+                <button class="delete-btn" data-name="${student.name}">x</button>
             </td>
         `;
 

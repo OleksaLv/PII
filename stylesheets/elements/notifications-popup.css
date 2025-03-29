@@ -1,71 +1,71 @@
-#notifications-popup {
-    box-sizing: border-box;
-    padding: 0 1rem;
-    padding-top: 1rem;
+.popup {
     display: none;
     position: absolute;
-    top: 40px;
-    left: 50%;
-    width: 90%;
-    transform: translateX(-50%);
     z-index: 10;
-    background-color: white;
-    border: 2px solid lightgray;
-    overflow: hidden;
-}
-
-#notification-icon {
-    transition: opacity 0.3s ease-in-out;
 }
 
 #notifications-popup {
-    margin-top: 1rem;
+    right: 0;
+    top: 3rem;
+    width: 300px;
 }
 
-.notification img {
-    box-sizing: border-box;
-    width: 4rem;
-    height: 4rem;
-    border-radius: 50%;
-    border: 2px solid black;
-}
-
-.notification p {
-    box-sizing: border-box;
-    padding: 1rem;
-    text-align: center;
-    width: 100%;
-    background-color: lightgray;
-    margin-top: 0;
-    margin-bottom: 2rem;
-    margin-left: 3rem;
-    border-radius: 10px;
-}
-
-.notification div p {
-    padding: 0;
-    background-color: white;
-    margin-top: 0;
-    margin-bottom: 1rem;
-    margin-left: 0;
-}
-
-header {
-    position: relative;
+.popup-body {
+    background-color: var(--dark-bg);
+    border: 3px solid var(--neon-yellow);
+    box-shadow: 0 0 15px var(--neon-yellow);
+    padding: 0.5rem;
+    border-radius: 0;
 }
 
 .notification {
-    text-align: center;
-    display: flex;
-    justify-content: flex-start;
+    padding: 0.8rem;
+    border-bottom: 1px solid rgba(255, 255, 0, 0.3);
+    cursor: pointer;
 }
 
-@media screen and (min-width: 1024px) {
+.notification:hover {
+    background-color: rgba(255, 255, 0, 0.1);
+}
+
+.notification div {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.notification img {
+    width: 1.5rem;
+    height: 1.5rem;
+    border: 1px solid var(--neon-pink);
+    margin-right: 0.5rem;
+    image-rendering: pixelated;
+}
+
+.notification p {
+    margin: 0;
+    color: var(--neon-green);
+    font-size: 0.7rem;
+}
+
+.notification div p {
+    color: var(--neon-yellow);
+    font-weight: bold;
+}
+
+@media (min-width: 768px) {
     #notifications-popup {
-        top: 60px;
-        right: 10px;
-        left: auto;
-        transform: none;
-        width: 30%;
+        top: 3.6rem;
+    }
+    
+    .notification p {
+        font-size: 0.8rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    #notifications-popup {
+        top: 4rem;
+        width: 350px;
     }
 }
