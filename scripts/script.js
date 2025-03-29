@@ -1,3 +1,108 @@
+function addStudentToTable(student, table, profileName) {    
+    //Online status if the student is the current user
+    if(student.name === profileName){
+        student.status = 'online';
+    }
+    else{ 
+        student.status = 'offline';
+    }
+
+    const cssFormatedName = student.name.toLowerCase().replace(' ', '-');
+    const row = document.createElement('tr');
+    row.innerHTML = `
+        <td>
+            <label for="${cssFormatedName}-checkbox" class="visually-hidden">Select ${cssFormatedName}</label>
+            <input type="checkbox" class="student-checkbox" id="${cssFormatedName}-checkbox">
+        </td>
+        <td>${student.group}</td>
+        <td>${student.name}</td>
+        <td>${student.gender}</td>
+        <td>${student.birthday}</td>
+        <td><div class="${student.status}"></div></td>
+        <td>
+            <button class="edit-btn">✎</button>
+            <button class="delete-btn" data-name="${student.name}">x</button>
+        </td>
+    `;
+
+    table.appendChild(row);
+    return row;
+}
+
+function addEditDelListeners(row, originalData, studentModal, modalTitle, modalGroupField, modalFirstNameField, modalLastNameField, modalGenderField, modalBirthdayField, currentRow, currentModalOperation, deleteModal, deleteMessage, currentStudentName) {
+    row.querySelector('.edit-btn').addEventListener('click', function() {
+        const checkbox = row.querySelector('.student-checkbox');
+        const allCheckboxes = document.querySelectorAll('.student-checkbox');
+        const checkedCheckboxes = Array.from(allCheckboxes).filter(cb => cb.checked);
+        
+        if (!checkbox.checked || checkedCheckboxes.length > 1) {
+            alert('Select only this student to edit');
+            return;
+        }
+
+        originalData.group = row.cells[1].textContent;
+        originalData.firstName = row.cells[2].textContent.split(' ')[0];
+        originalData.lastName = row.cells[2].textContent.split(' ')[1];
+        originalData.gender = row.cells[3].textContent === 'M' ? 'Male' : 'Female';
+        originalData.birthday = row.cells[4].textContent;
+
+        //Set form fields with current values
+        modalGroupField.value = originalData.group;
+        modalFirstNameField.value = originalData.firstName;
+        modalLastNameField.value = originalData.lastName;
+        modalGenderField.value = originalData.gender;
+
+        //Convert birthday format from dd.mm.yyyy to yyyy-mm-dd
+        const birthdayParts = originalData.birthday.split('.');
+        const formattedBirthday = `${birthdayParts[2]}-${birthdayParts[1]}-${birthdayParts[0]}`;
+        modalBirthdayField.value = formattedBirthday;
+
+        //Configure modal for edit operation
+        modalTitle.textContent = 'Edit Student';
+        currentModalOperation = 'edit';
+        studentModal.style.display = 'block';
+        currentRow = row;
+        return { currentRow, currentModalOperation };
+    });
+
+    row.querySelector('.delete-btn').addEventListener('click', function() {
+        const checkbox = row.querySelector('.student-checkbox');
+        if (!checkbox.checked) {
+            alert('Select it first');
+            return;
+        }
+        currentRow = row;
+        const allCheckboxes = document.querySelectorAll('.student-checkbox');
+        const allChecked = Array.from(allCheckboxes).filter(cb => cb.checked);
+        currentStudentName = allChecked.length === 1 ? this.getAttribute('data-name') : 'ALL selected students';           
+
+        deleteMessage.textContent = `Are you sure you want to delete ${currentStudentName}?`;
+        deleteModal.style.display = 'block';
+        return { currentRow, currentStudentName };
+    });
+}
+
+function addCheckboxListener(checkbox) {
+    checkbox.addEventListener('change', function() {
+        if (!this.checked) {
+            document.getElementById('select-all').checked = false;
+        } else {
+            //If all checkboxes are checked, check the header checkbox
+            const allCheckboxes = document.querySelectorAll('.student-checkbox');
+            const allChecked = Array.from(allCheckboxes).every(cb => cb.checked);
+            document.getElementById('select-all').checked = allChecked;
+        }
+    });
+}
+
+function resetModalFields(modalGroupField, modalFirstNameField, modalLastNameField, modalGenderField, modalBirthdayField) {
+    modalGroupField.value = '';
+    modalFirstNameField.value = '';
+    modalLastNameField.value = '';
+    modalGenderField.value = '';
+    modalBirthdayField.value = '';
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     let studentsData = [];
     const table = document.querySelector('#table-container table');
@@ -34,16 +139,21 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(data => {
             studentsData = data;
             data.forEach(student => { 
-                const row = addStudentToTable(student);
+                const row = addStudentToTable(student, table, profileName);
                 
-                // Add event listeners to edit and delete buttons of row
-                addEditDelListeners(row);
+                //Add event listeners to edit and delete buttons of row
+                const result = addEditDelListeners(row, originalData, studentModal, modalTitle, modalGroupField, modalFirstNameField, modalLastNameField, modalGenderField, modalBirthdayField, currentRow, currentModalOperation, deleteModal, deleteMessage, currentStudentName);
+                if (result) {
+                    if (result.currentRow) currentRow = result.currentRow;
+                    if (result.currentModalOperation) currentModalOperation = result.currentModalOperation;
+                    if (result.currentStudentName) currentStudentName = result.currentStudentName;
+                }
                 
-                // Add event listener to checkbox
+                //Add event listener to checkbox
                 addCheckboxListener(row.querySelector('.student-checkbox'));
             });
 
-            // Add event listener to the header checkbox
+            //Add event listener to the header checkbox
             const selectAllCheckbox = document.getElementById('select-all');
             selectAllCheckbox.addEventListener('change', function() {
                 const checkboxes = document.querySelectorAll('.student-checkbox');
@@ -97,7 +207,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     //Student modal logic
     document.querySelector('.add-btn').addEventListener('click', function() {
-        resetModalFields();
+        resetModalFields(modalGroupField, modalFirstNameField, modalLastNameField, modalGenderField, modalBirthdayField);
         modalTitle.textContent = 'Add Student';
         currentModalOperation = 'add';
         studentModal.style.display = 'block';
@@ -134,7 +244,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.log('Updated Students.json:', JSON.stringify(studentsData, null, 2));
     
                 //Add the new student to the table and get the row
-                const newRow = addStudentToTable(newStudent);
+                const newRow = addStudentToTable(newStudent, table, profileName);
     
                 //Add event listener to the new checkbox
                 const newCheckbox = newRow.querySelector('.student-checkbox');
@@ -146,7 +256,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
     
                 //Add event listeners to the new buttons
-                addEditDelListeners(newRow);
+                const result = addEditDelListeners(newRow, originalData, studentModal, modalTitle, modalGroupField, modalFirstNameField, modalLastNameField, modalGenderField, modalBirthdayField, currentRow, currentModalOperation, deleteModal, deleteMessage, currentStudentName);
+                if (result) {
+                    if (result.currentRow) currentRow = result.currentRow;
+                    if (result.currentModalOperation) currentModalOperation = result.currentModalOperation;
+                    if (result.currentStudentName) currentStudentName = result.currentStudentName;
+                }
                 
             } else if (currentModalOperation === 'edit') {
                 //Check if any data has changed
@@ -222,111 +337,4 @@ document.addEventListener('DOMContentLoaded', function() {
     profilePopup.addEventListener('mouseleave', function() {
         profilePopup.style.display = 'none';
     });
-
-    //Functions
-    function addStudentToTable(student) {    
-
-        //Online status if the student is the current user
-        if(student.name === profileName){
-            student.status = 'online';
-        }
-        else{ 
-            student.status = 'offline';
-        }
-
-        const cssFormatedName = student.name.toLowerCase().replace(' ', '-');
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            <td>
-                <label for="${cssFormatedName}-checkbox" class="visually-hidden">Select ${cssFormatedName}</label>
-                <input type="checkbox" class="student-checkbox" id="${cssFormatedName}-checkbox">
-            </td>
-            <td>${student.group}</td>
-            <td>${student.name}</td>
-            <td>${student.gender}</td>
-            <td>${student.birthday}</td>
-            <td><div class="${student.status}"></div></td>
-            <td>
-                <button class="edit-btn">✎</button>
-                <button class="delete-btn" data-name="${student.name}">x</button>
-            </td>
-        `;
-
-        table.appendChild(row);
-        return row;
-    }
-    
-    function addEditDelListeners(row) {
-        row.querySelector('.edit-btn').addEventListener('click', function() {
-            const checkbox = row.querySelector('.student-checkbox');
-            const allCheckboxes = document.querySelectorAll('.student-checkbox');
-            const checkedCheckboxes = Array.from(allCheckboxes).filter(cb => cb.checked);
-            
-            if (!checkbox.checked || checkedCheckboxes.length > 1) {
-                alert('Select only this student to edit');
-                return;
-            }
-
-            originalData = {
-                group: row.cells[1].textContent,
-                firstName: row.cells[2].textContent.split(' ')[0],
-                lastName: row.cells[2].textContent.split(' ')[1],
-                gender: row.cells[3].textContent === 'M' ? 'Male' : 'Female',
-                birthday: row.cells[4].textContent
-            };
-
-            //Set form fields with current values
-            modalGroupField.value = originalData.group;
-            modalFirstNameField.value = originalData.firstName;
-            modalLastNameField.value = originalData.lastName;
-            modalGenderField.value = originalData.gender;
-
-            //Convert birthday format from dd.mm.yyyy to yyyy-mm-dd
-            const birthdayParts = originalData.birthday.split('.');
-            const formattedBirthday = `${birthdayParts[2]}-${birthdayParts[1]}-${birthdayParts[0]}`;
-            modalBirthdayField.value = formattedBirthday;
-
-            //Configure modal for edit operation
-            modalTitle.textContent = 'Edit Student';
-            currentModalOperation = 'edit';
-            studentModal.style.display = 'block';
-            currentRow = row;
-        });
-
-        row.querySelector('.delete-btn').addEventListener('click', function() {
-            const checkbox = row.querySelector('.student-checkbox');
-            if (!checkbox.checked) {
-                alert('Select it first');
-                return;
-            }
-            currentRow = row;
-            const allCheckboxes = document.querySelectorAll('.student-checkbox');
-            const allChecked = Array.from(allCheckboxes).filter(cb => cb.checked);
-            currentStudentName = allChecked.length === 1 ? this.getAttribute('data-name') :'ALL selected students';           
-
-            deleteMessage.textContent = `Are you sure you want to delete ${currentStudentName}?`;
-            deleteModal.style.display = 'block';
-        });
-    }
-
-    function addCheckboxListener(checkbox){
-        checkbox.addEventListener('change', function() {
-            if (!this.checked) {
-                document.getElementById('select-all').checked = false;
-            } else {
-                //If all checkboxes are checked, check the header checkbox
-                const allCheckboxes = document.querySelectorAll('.student-checkbox');
-                const allChecked = Array.from(allCheckboxes).every(cb => cb.checked);
-                document.getElementById('select-all').checked = allChecked;
-            }
-        });
-    }
-
-    function resetModalFields() {
-        modalGroupField.value = '';
-        modalFirstNameField.value = '';
-        modalLastNameField.value = '';
-        modalGenderField.value = '';
-        modalBirthdayField.value = '';
-    }
 });
