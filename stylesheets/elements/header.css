@@ -53,6 +53,11 @@ header #profile {
     align-items: center;
 }
 
+header #profile p
+{
+    display: none;
+}
+
 header #profile img {
     box-sizing: border-box;
     width: 2rem;
@@ -106,6 +111,13 @@ header #site-name:hover {
     text-shadow: 0 0 15px var(--neon-yellow);
 }
 
+@media (min-width: 480px) {
+    header #profile p {
+        display: block;
+        width: min-content;
+    }
+}
+
 @media (min-width: 768px) {
     header {
         height: 3.6rem;
@@ -115,6 +127,10 @@ header #site-name:hover {
         width: 2.3rem;
         height: 2.3rem;
         margin-right: 0.5rem;
+    }
+
+    header #profile p {
+        width: max-content;
     }
 
     header #notifications {

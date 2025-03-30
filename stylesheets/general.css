@@ -11,6 +11,8 @@
 }
 
 * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--neon-blue) var(--dark-bg);
     box-sizing: border-box;
     font-family: 'Press Start 2P', monospace;
 }
@@ -147,6 +149,26 @@ a:hover {
 
 #content {
     animation: turnOn 0.4s;
+}
+
+/* Fixing scroll of section for phone browsers */
+@media (max-width: 767px) {
+    body {
+        height: 100%;
+        position: fixed;
+        width: 100%;
+    }
+    
+    #content {
+        height: calc(100% - 3rem);
+        overflow: hidden;
+    }
+    
+    section {
+        -webkit-overflow-scrolling: touch;
+        overflow-y: auto;
+        flex: 1;
+    }
 }
 
 @media (min-width: 768px) {

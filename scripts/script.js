@@ -5,6 +5,13 @@ let currentRow = null;
 let currentStudentName = '';
 let currentStudentId = '';
 
+if ("serviceWorker" in navigator) {
+    navigator.serviceWorker
+      .register('./sw.js')
+      .then(() => console.log("Service Worker registered"))
+      .catch((err) => console.error("Service Worker registration failed", err));
+  }
+
 function addStudentToTable(student, table, profileName) {    
     //Online status if the student is the current user
     if(student.name === profileName){
@@ -232,6 +239,10 @@ function validateForm(modalGroupField, modalFirstNameField, modalLastNameField,
 }
 
 function showError(inputElement, errorMessage) {
+    //Clear previous error alerts
+    const errorAlerts = document.querySelectorAll('.error-alert');
+    errorAlerts.forEach(alert => alert.remove());
+
     //Add error class to input element
     inputElement.classList.add('error-input');
     
@@ -243,10 +254,11 @@ function showError(inputElement, errorMessage) {
     //Position the alert near the top of the form
     const form = document.getElementById('student-form');
     form.parentNode.insertBefore(alertElement, form);
-    
+
     //Animate the alert
     setTimeout(() => alertElement.classList.add('show'), 10);
     
+
     //Set timeout to remove the alert after 3 seconds
     const timerId = setTimeout(() => {
         alertElement.classList.remove('show');
