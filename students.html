@@ -125,51 +125,58 @@
         <div class="modal-content">
             <div class="modal-header">
                 <p id="modal-title">Student Form</p>
-                <button id="close-modal-window">x</button>
+                <button id="close-modal-window" type="button">x</button>
             </div>
             <hr>
-            <div class="modal-body">
-                <div style="display: none;">
-                    <input type="hidden" id="modal-student-id" name="modal-student-id">
+            <form id="student-form" novalidate>
+                <div class="modal-body">
+                    <div style="display: none;">
+                        <input type="hidden" id="modal-student-id" name="modal-student-id">
+                    </div>
+                    <div>
+                        <label for="modal-group">Group</label>
+                        <select id="modal-group" name="modal-group" class="select-field" required>
+                            <option value="" disabled selected>Select group</option>
+                            <option value="PZ-31">PZ-31</option>
+                            <option value="PZ-32">PZ-32</option>
+                            <option value="PZ-33">PZ-33</option>
+                            <option value="PZ-34">PZ-34</option>
+                            <option value="PZ-35">PZ-35</option>
+                            <option value="PZ-36">PZ-36</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="modal-first-name">First name</label>
+                        <input type="text" id="modal-first-name" name="modal-first-name" class="input-field" 
+                                required pattern="[A-Za-z]+" minlength="2" maxlength="30" 
+                                title="First name should contain only letters, 2-30 characters long">
+                    </div>
+                    <div>
+                        <label for="modal-last-name">Last name</label>
+                        <input type="text" id="modal-last-name" name="modal-last-name" class="input-field" 
+                                required pattern="[A-Za-z]+" minlength="2" maxlength="30"
+                                title="Last name should contain only letters, 2-30 characters long">
+                    </div>
+                    <div>
+                        <label for="modal-gender">Gender</label>
+                        <select id="modal-gender" name="modal-gender" class="select-field" required>
+                            <option value="" disabled selected>Select gender</option>
+                            <option value="Female">Female</option>
+                            <option value="Male">Male</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="modal-birthday">Birthday</label>
+                        <input type="date" id="modal-birthday" name="modal-birthday" class="input-field" 
+                                required min="1900-01-01" max="2010-01-01">
+                    </div>
                 </div>
-                <div>
-                    <label for="modal-group">Group</label>
-                    <select id="modal-group" name="modal-group" class="select-field" required>
-                        <option value="" disabled selected>Select group</option>
-                        <option value="PZ-31">PZ-31</option>
-                        <option value="PZ-32">PZ-32</option>
-                        <option value="PZ-33">PZ-33</option>
-                        <option value="PZ-34">PZ-34</option>
-                        <option value="PZ-35">PZ-35</option>
-                        <option value="PZ-36">PZ-36</option>
-                    </select>
+                <hr>
+                <div class="modal-footer">
+                    <button type="submit" id="confirm-modal">Submit</button>
+                    <button type="button" id="cancel-modal">Cancel</button>
                 </div>
-                <div>
-                    <label for="modal-first-name">First name</label>
-                    <input type="text" id="modal-first-name" name="modal-first-name" class="input-field" required>
-                </div>
-                <div>
-                    <label for="modal-last-name">Last name</label>
-                    <input type="text" id="modal-last-name" name="modal-last-name" class="input-field" required>
-                </div>
-                <div>
-                    <label for="modal-gender">Gender</label>
-                    <select id="modal-gender" name="modal-gender" class="select-field" required>
-                        <option value="" disabled selected>Select gender</option>
-                        <option value="Female">Female</option>
-                        <option value="Male">Male</option>
-                    </select>
-                </div>
-                <div>
-                    <label for="modal-birthday">Birthday</label>
-                    <input type="date" id="modal-birthday" name="modal-birthday" class="input-field" required>
-                </div>
-            </div>
-            <hr>
-            <div class="modal-footer">
-                <button id="confirm-modal">Ok</button>
-                <button id="cancel-modal">Cancel</button>
-            </div>
+            </form>
         </div>
     </div>
 

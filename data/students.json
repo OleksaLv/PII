@@ -1,38 +1,26 @@
 [
   {
-    "checkbox": false,
-    "group": "PZ-34",
+    "id": "student_1743322589512_tirm4xsak",
+    "group": "PZ-35",
     "name": "Yurii Stelmakh",
     "gender": "M",
     "birthday": "01.01.2006",
-    "status": "offline",
-    "options": {
-      "edit": true,
-      "delete": "Yurii Stelmakh"
-    }
+    "status": "offline"
   },
   {
-    "checkbox": false,
-    "group": "PZ-35",
+    "id": "student_1743322623804_779p3d76g",
+    "group": "PZ-36",
     "name": "Andrii Potikha",
-    "gender": "F",
+    "gender": "M",
     "birthday": "02.01.2006",
-    "status": "offline",
-    "options": {
-      "edit": true,
-      "delete": "Andrii Potikha"
-    }
+    "status": "offline"
   },
   {
-    "checkbox": false,
-    "group": "PZ-34",
+    "id": "student_1743322646650_ppbb0uioh",
+    "group": "PZ-35",
     "name": "Oleksii Mahinskyi",
-    "gender": "F",
+    "gender": "M",
     "birthday": "03.01.2006",
-    "status": "offline",
-    "options": {
-      "edit": true,
-      "delete": "Oleksii Mahinskyi"
-    }
+    "status": "offline"
   }
 ]

@@ -218,6 +218,51 @@ hr {
     transform: scale(1.1);
 }
 
+/* Error alert styling */
+.error-alert {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-20px);
+    background-color: rgba(255, 50, 50, 0.9);
+    color: white;
+    padding: 8px 20px;
+    border-radius: 4px;
+    box-shadow: 0 0 15px rgba(255, 50, 50, 0.7);
+    font-size: 0.9rem;
+    font-weight: bold;
+    z-index: 110;
+    opacity: 0;
+    transition: all 0.3s ease;
+    text-align: center;
+    border-left: 4px solid #ff0000;
+    max-width: 80%;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
+}
+
+.error-alert.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+/* Pulsating error effect for inputs */
+.error-input {
+    border: 2px solid #ff3e5b !important;
+    box-shadow: 0 0 8px #ff3e5b !important;
+    animation: error-pulse 1.5s infinite alternate;
+}
+
+@keyframes error-pulse {
+    0% { box-shadow: 0 0 5px #ff3e5b; }
+    100% { box-shadow: 0 0 12px #ff3e5b; }
+}
+
+.modal-body input:focus,
+.modal-body select:focus {
+    outline: none;
+    box-shadow: 0 0 10px var(--neon-blue);
+}
+
 @media (max-width: 320px) {
     .modal-content {
         width: 95%;
