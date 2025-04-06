@@ -212,7 +212,7 @@ function validateForm(modalGroupField, modalFirstNameField, modalLastNameField,
     } else if (!modalLastNameField.validity.valid) {
         showError(modalLastNameField, modalLastNameField.title || 'Last name should contain only letters, 2-30 characters long');
         isValid = false;
-    } else if (!/^[A-Za-z]{2,30}$/.test(modalLastNameField.value)) {
+    } else if (!/^[A-Za-z']+([-][A-Za-z']+)*$/.test(modalLastNameField.value)) {
         showError(modalLastNameField, 'Last name must contain only letters, 2-30 characters long');
         isValid = false;
     }
@@ -224,7 +224,7 @@ function validateForm(modalGroupField, modalFirstNameField, modalLastNameField,
     } else if (!modalFirstNameField.validity.valid) {
         showError(modalFirstNameField, modalFirstNameField.title || 'First name should contain only letters, 2-30 characters long');
         isValid = false;
-    } else if (!/^[A-Za-z]{2,30}$/.test(modalFirstNameField.value)) {
+    } else if (!/^[A-Za-z']+([-][A-Za-z']+)*$/.test(modalFirstNameField.value)) {
         showError(modalFirstNameField, 'First name must contain only letters, 2-30 characters long');
         isValid = false;
     }
