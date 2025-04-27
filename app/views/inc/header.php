@@ -17,17 +17,17 @@
         <?php endforeach; ?>
     <?php endif; ?>
     
-    <title><?= SITENAME ?> - <?= $data['title'] ?? '' ?></title>
+    <title><?= SITENAME . ($data['title'] ? ' - ' . $data['title'] : '') ?></title>
 </head>
 
 <body>
     <header>
         <a id="site-name" href="<?= URLROOT ?>/students"><?= SITENAME ?></a>
         <div class="spacing"></div>
-        <a id="notifications" href="<?= URLROOT ?>/mesages">
+        <a id="notifications" href="<?= URLROOT ?>/messages">
             <img id="notification-icon" src="<?= URLROOT ?>/img/bell.png" alt="notifications">
         </a>
-        <a id="profile" href="<?= URLROOT ?>/mesages">
+        <a id="profile" href="<?= URLROOT ?>/messages">
             <img id="profile-icon" src="<?= URLROOT ?>/img/profile.jpg" alt="profile-icon">
             <p id="profile-name">Oleksii Mahinskyi</p>
         </a>

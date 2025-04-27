@@ -1,7 +1,6 @@
 <?php
 class Students extends Controller
 {
-    private $postModel;
     public function __construct() {
 
     }
@@ -9,9 +8,27 @@ class Students extends Controller
     public function index() {
         $data = [
             'css' => ['students/index.css', 'students/student-modal.css'],
-            'title' => 'Studnet'
+            'title' => 'Main'
         ];
         
         $this->view('students/index', $data);
+    }
+
+    public function dashboard() {
+        $data = [
+            'css' => ['students/dashboard.css'],
+            'title' => 'Dashboard'
+        ];
+        
+        $this->view('students/dashboard', $data);
+    }
+
+    public function tasks() {
+        $data = [
+            'css' => ['students/tasks.css'],
+            'title' => 'Tasks'
+        ];
+        
+        $this->view('students/tasks', $data);
     }
 }
