@@ -8,6 +8,6 @@ define('DB_NAME', 'pii-lab');
 //App route
 define('APPROOT', dirname(dirname(__FILE__)));
 //URL route
-define('URLROOT', 'http://localhost/pii/');
+define('URLROOT', 'http://localhost/pii');
 //Site name
 define('SITENAME', 'Studnet');
