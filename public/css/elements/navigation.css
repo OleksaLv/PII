@@ -1,0 +1,177 @@
+/* Navigation Container */
+nav {
+    width: 100%;
+    height: 3rem;
+    background: rgba(0, 0, 51, 0.8);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Grid Background Effect */
+nav::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+        linear-gradient(to right, rgba(0, 255, 255, 0.1) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(0, 255, 255, 0.1) 1px, transparent 1px);
+    background-size: 20px 20px;
+    z-index: 0;
+    pointer-events: none;
+}
+
+/* Navigation List */
+nav ul {
+    height: 100%;
+    padding: 0;
+    margin: 0;
+    list-style-type: none;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+}
+
+nav ul li {
+    flex: 1;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Navigation Links */
+nav ul li a {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--neon-green);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-left: 1px solid rgba(0, 255, 0, 0.2);
+    border-right: 1px solid rgba(0, 255, 0, 0.2);
+    text-shadow: 0 0 5px var(--neon-green);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Link Gradient Effect */
+nav ul li a::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        0deg,
+        transparent 0%,
+        rgba(0, 255, 0, 0.1) 2%,
+        transparent 5%,
+        transparent 95%,
+        rgba(0, 255, 0, 0.1) 98%,
+        transparent 100%
+    );
+    z-index: -1;
+}
+
+/* Hover Effects */
+nav ul li a:hover {
+    background-color: rgba(0, 255, 0, 0.2);
+    text-shadow: 0 0 8px var(--neon-green), 0 0 12px var(--neon-green);
+}
+
+/* Media Queries */
+@media (min-width: 480px) {
+    nav ul li a {
+        font-size: 0.9rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    /* Desktop Layout */
+    nav {
+        height: 100%;
+        width: 18rem;
+        min-width: 18rem;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        overflow-y: auto;
+        border-right: 4px solid var(--neon-pink);
+        background: linear-gradient(
+            to right,
+            var(--light-bg),
+            var(--dark-bg)
+        );
+    }
+    
+    nav::before {
+        width: 18rem;
+    }
+    
+    /* Vertical Navigation */
+    nav ul {
+        margin-top: 1.5rem;
+        width: 100%;
+        height: auto;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+    }
+      
+    nav ul li {
+        width: 100%;
+        height: 2.5rem;
+        flex: 0 0 2.5rem;
+        justify-content: flex-start;
+        margin-bottom: 1rem;
+    }
+    
+    /* Desktop Navigation Links */
+    nav ul li a {
+        width: 100%;
+        height: 100%;
+        padding-left: 2rem;
+        justify-content: flex-start;
+        border: 2px solid var(--neon-green);
+        margin-left: 1rem;
+        margin-right: 1rem;
+        font-size: 0.9rem;
+        clip-path: polygon(0 0, 100% 0, 95% 100%, 0% 100%);
+    }
+    
+    /* Desktop Hover Animation */
+    nav ul li a:hover {
+        transform: translateX(3px);
+        transition: transform 0.2s;
+    }
+}
+
+@media (min-width: 1440px) {
+    /* Large Desktop Adjustments */
+    nav {
+        width: 20rem;
+        min-width: 20rem;
+    }
+
+    nav::before {
+        width: 20rem;
+    }
+    
+    nav ul {
+        margin-top: 2.5rem;
+    }
+
+    nav ul li {
+        height: 2.8rem;
+        flex: 0 0 2.8rem;
+    }
+}
