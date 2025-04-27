@@ -5,10 +5,21 @@ class Students extends Controller
 
     }
 
-    public function index() {
+    public function index($page = 1) {
+        $totalPages = 4;
+
+        //Validate page number
+        if(is_int($page) && $page > $totalPages) {
+            $page = $totalPages;
+        } else if(!is_int($page) || $page < 0) {
+            $page = 1;
+        }
+        
         $data = [
             'css' => ['students/index.css', 'students/student-modal.css'],
-            'title' => 'Main'
+            'title' => 'Students',
+            'page' => $page,
+            'total_pages' => $totalPages
         ];
         
         $this->view('students/index', $data);

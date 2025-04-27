@@ -132,7 +132,7 @@ table label {
     justify-content: center;
 }
 
-#pagination button {
+#pagination .page-link {
     width: 2.5rem;
     height: 2.5rem;
     font-size: 0.8rem;
@@ -143,6 +143,32 @@ table label {
     display: flex;
     justify-content: center;
     align-items: center;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-shadow: none;
+}
+
+#pagination .page-link:hover,
+#pagination .page-link.active {
+    background-color: var(--neon-blue);
+    color: var(--dark-bg);
+    box-shadow: 0 0 15px var(--neon-blue);
+    text-shadow: none;
+}
+
+#pagination .page-link.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+    text-shadow: none;
+}
+
+/* Remove this section as it's no longer needed */
+#pagination button:hover,
+#pagination button:nth-child(2) {
+    background-color: var(--neon-blue);
+    color: var(--dark-bg);
+    box-shadow: 0 0 15px var(--neon-blue);
 }
 
 /* Icon Buttons */
@@ -204,13 +230,6 @@ input[type="checkbox"]:checked::before {
 
 tr:hover td {
     background-color: rgba(0, 255, 255, 0.1);
-}
-
-#pagination button:hover,
-#pagination button:nth-child(2) {
-    background-color: var(--neon-blue);
-    color: var(--dark-bg);
-    box-shadow: 0 0 15px var(--neon-blue);
 }
 
 @keyframes pulse {
