@@ -1,8 +1,16 @@
 <?php
 class Messages extends Controller
 {
-    public function __construct() {
+    private $messageModel;
+    private $userModel;
 
+    public function __construct() {
+        if(!isLoggedIn()) {
+            redirect('users/login');
+        }
+
+        $this->messageModel = $this->model('Message');
+        $this->userModel = $this->model('User');
     }
 
     public function index() {

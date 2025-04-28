@@ -69,7 +69,8 @@ h1::after {
     background-color: transparent;
     color: var(--neon-green);
     box-shadow: 0 0 10px var(--neon-green);
-}
+    text-decoration: none;
+  }
 
 /* Table Container */
 #table-container {

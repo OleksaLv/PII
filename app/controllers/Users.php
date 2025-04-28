@@ -26,6 +26,7 @@ class Users extends Controller
             //Init data
             $data = [
                 'css' => ['users/register.css'],
+                'title' => 'Register',
                 'name' => trim($_POST['name']),
                 'email' => trim($_POST['email']),
                 'password' => trim($_POST['password']),
@@ -92,6 +93,7 @@ class Users extends Controller
             //Init data
             $data = [
                 'css' => ['users/register.css'],
+                'title' => 'Register',
                 'name' => '',
                 'email' => '',
                 'password' => '',
@@ -118,6 +120,7 @@ class Users extends Controller
             //Init data
             $data = [
                 'css' => ['users/login.css'],
+                'title' => 'Login',
                 'email' => trim($_POST['email']),
                 'password' => trim($_POST['password']),
                 'email_err' => '',
@@ -166,6 +169,7 @@ class Users extends Controller
             //Init data
             $data = [
                 'css' => ['users/login.css'],
+                'title' => 'Login',
                 'email' => '',
                 'password' => '',
                 'email_err' => '',

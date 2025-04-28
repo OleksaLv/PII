@@ -17,7 +17,7 @@
     <?php endforeach; ?>
   <?php endif; ?>
   
-  <title><?= SITENAME . ($data['title'] ? ' - ' . $data['title'] : '') ?></title>
+  <title><?= SITENAME . (isset($data['title']) ? (' - ' . $data['title']) : '') ?></title>
 </head>
 
 <body>

@@ -4,15 +4,16 @@
   <div class="login-container">
     <?php flash('register_success'); ?>
     <h1>Login</h1>
+    
     <form action="<?= URLROOT ?>/users/login" method="post" class="login-form">
       <div class="form-group">
-        <label for="email">Email</label>
+        <label for="email">Email<sup>*</sup></label>
         <input type="email" id="email" name="email" value="<?= $data['email'] ?? '' ?>">
         <span class="invalid-feedback"><?= $data['email_err'] ?? '' ?></span>
       </div>
       
       <div class="form-group">
-        <label for="password">Password</label>
+        <label for="password">Password<sup>*</sup></label>
         <input type="password" id="password" name="password" value="<?= $data['password'] ?? '' ?>">
         <span class="invalid-feedback"><?= $data['password_err'] ?? '' ?></span>
       </div>

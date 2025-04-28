@@ -54,6 +54,15 @@
     border: 2px solid var(--neon-pink);
 }
 
+/* Close link styling */
+#close-modal-window,
+#close-del-window {
+    text-decoration: none;
+    color: var(--neon-pink);
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
 /* Modal Body */
 .modal-body {
     padding: 1rem;
@@ -130,14 +139,17 @@
     padding: 1rem;
     display: flex;
     justify-content: flex-end;
+    gap: 1rem; /* Added gap for spacing between buttons */
 }
 
 .modal-footer button {
     padding: 0.5rem 1rem;
-    margin-left: 0.5rem;
     font-size: 0.8rem;
     text-transform: uppercase;
-    min-width: 60px;
+    min-width: 80px;
+    cursor: pointer;
+    background-color: transparent;
+    border: 2px solid;
 }
 
 /* Button Styles */
@@ -148,11 +160,65 @@
     box-shadow: 0 0 10px var(--neon-pink);
 }
 
-#cancel-delete,
-#cancel-modal {
-    border-color: var(--neon-blue);
+/* Cancel button as link styling - updated to match submit buttons */
+#cancel-modal,
+#cancel-delete {
+    border: 2px solid var(--neon-blue);
+    background-color: transparent;
     color: var(--neon-blue);
     box-shadow: 0 0 10px var(--neon-blue);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    min-width: 80px;
+    text-align: center;
+}
+
+/* Fix for alignment in delete modal footer form */
+.modal-footer form {
+    display: flex;
+    gap: 1rem;
+}
+
+/* Table action buttons */
+.edit-btn,
+.delete-btn {
+    display: inline-block;
+    width: 25px;
+    height: 25px;
+    line-height: 22px;
+    text-align: center;
+    cursor: pointer;
+    margin: 0 3px;
+    text-decoration: none;
+}
+
+.edit-btn {
+    color: var(--neon-green);
+    border: 1px solid var(--neon-green);
+    box-shadow: 0 0 5px var(--neon-green);
+}
+
+.delete-btn {
+    color: var(--neon-pink);
+    border: 1px solid var(--neon-pink);
+    box-shadow: 0 0 5px var(--neon-pink);
+}
+
+.edit-btn:hover {
+    background-color: var(--neon-green);
+    color: var(--dark-bg);
+    box-shadow: 0 0 10px var(--neon-green);
+}
+
+.delete-btn:hover {
+    background-color: var(--neon-pink);
+    color: var(--dark-bg);
+    box-shadow: 0 0 10px var(--neon-pink);
 }
 
 /* Divider */
@@ -189,9 +255,33 @@ hr {
     text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
 }
 
-.error-input {
+/* Form validation error styles */
+.is-invalid {
+    border-color: #ff3e5b !important; 
+    box-shadow: 0 0 5px #ff3e5b !important;
+}
+
+.invalid-feedback {
+    display: block;
+    color: #ff3e5b;
+    font-size: 0.8rem;
+    margin-top: 0.3rem;
+    margin-bottom: 0.5rem;
+    text-shadow: 0 0 5px rgba(255, 62, 91, 0.7);
+    font-weight: bold;
+}
+
+/* Error input highlight */
+.error-input,
+.is-invalid {
     border: 2px solid #ff3e5b !important;
     box-shadow: 0 0 8px #ff3e5b !important;
+    animation: error-pulse 1.5s infinite alternate;
+}
+
+@keyframes error-pulse {
+    0% { box-shadow: 0 0 5px #ff3e5b; }
+    100% { box-shadow: 0 0 12px #ff3e5b; }
 }
 
 /* Animations */
@@ -216,17 +306,10 @@ hr {
     transition: all 0.3s ease;
 }
 
-.error-input {
-    animation: error-pulse 1.5s infinite alternate;
-}
-
-@keyframes error-pulse {
-    0% { box-shadow: 0 0 5px #ff3e5b; }
-    100% { box-shadow: 0 0 12px #ff3e5b; }
-}
-
 .modal-header button#close-del-window:hover,
-.modal-header button#close-modal-window:hover {
+.modal-header button#close-modal-window:hover,
+#close-modal-window:hover,
+#close-del-window:hover {
     background-color: var(--neon-pink);
     color: var(--dark-bg);
     transform: scale(1.05);
@@ -238,12 +321,17 @@ hr {
 #confirm-modal:hover {
     background-color: var(--neon-pink);
     color: var(--dark-bg);
+    transform: scale(1.05);
+    transition: all 0.2s ease;
 }
 
 #cancel-delete:hover,
 #cancel-modal:hover {
     background-color: var(--neon-blue);
     color: var(--dark-bg);
+    transform: scale(1.05);
+    transition: all 0.2s ease;
+    text-shadow: none;
 }
 
 .modal-body input[type="date"]::-webkit-calendar-picker-indicator:hover {
@@ -269,5 +357,20 @@ hr {
     
     .modal-header p {
         font-size: 1rem;
+    }
+    
+    /* Adjust footer form in small screens */
+    .modal-footer form {
+        flex-direction: column;
+        width: 100%;
+        align-items: center;
+    }
+    
+    #cancel-modal,
+    #cancel-delete,
+    #confirm-modal,
+    #confirm-delete {
+        width: 100%;
+        margin-top: 0.5rem;
     }
 }

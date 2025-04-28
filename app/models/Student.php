@@ -8,11 +8,18 @@ class Student
     }
 
     public function getStudents($offset = 0, $limit = 4) {
-        //Query to fetch students with pagination
-        $this->db->query('SELECT * FROM students ORDER BY created_at LIMIT :offset, :limit');
+        // Query to fetch students with group names using a JOIN
+        $this->db->query('
+            SELECT students.*, groups.name AS group_name 
+            FROM students 
+            LEFT JOIN groups ON students.group_id = groups.id 
+            ORDER BY students.id 
+            LIMIT :offset, :limit
+        ');
+    
         $this->db->bind(':offset', $offset, PDO::PARAM_INT);
         $this->db->bind(':limit', $limit, PDO::PARAM_INT);
-        
+    
         $students = $this->db->resultSet();
         return $students;
     }
@@ -35,11 +42,11 @@ class Student
 
     public function addStudent($data) {
         //Query to insert a new student
-        $this->db->query('INSERT INTO students (name, group, gender, birthday) 
-                        VALUES (:name, :group, :gender, :birthday)');
+        $this->db->query('INSERT INTO students (name, group_id, gender, birthday) 
+                        VALUES (:name, :group_id, :gender, :birthday)');
 
         $this->db->bind(':name', $data['name']);
-        $this->db->bind(':group', $data['group']);
+        $this->db->bind(':group_id', $data['group_id']);
         $this->db->bind(':gender', $data['gender']);
         $this->db->bind(':birthday', $data['birthday']);
 
@@ -51,18 +58,18 @@ class Student
         }
     }
 
-    public function updateStudent($id, $data) {
-        //Query to update a student
-        $this->db->query('UPDATE students SET name = :name, group = :group,
+    public function updateStudent($data, $id) {
+        // Query to update a student
+        $this->db->query('UPDATE students SET name = :name, group_id = :group_id,
                         gender = :gender, birthday = :birthday WHERE id = :id');
-
+    
         $this->db->bind(':id', $id);
         $this->db->bind(':name', $data['name']);
-        $this->db->bind(':group', $data['group']);
+        $this->db->bind(':group_id', $data['group_id']);
         $this->db->bind(':gender', $data['gender']);
         $this->db->bind(':birthday', $data['birthday']);
-
-        //Execute
+    
+        // Execute
         if ($this->db->execute()) {
             return true;
         } else {
@@ -81,5 +88,13 @@ class Student
         } else {
             return false;
         }
+    }
+
+    public function getGroups() {
+        //Query to fetch all groups
+        $this->db->query('SELECT * FROM groups');
+        
+        $groups = $this->db->resultSet();
+        return $groups;
     }
 }
