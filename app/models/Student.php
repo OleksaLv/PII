@@ -8,11 +8,6 @@ class Student
     }
 
     public function getStudents($offset = 0, $limit = 4) {
-        //Validate offset and limit
-        if (!is_int($offset) || $offset < 0 || !is_int($limit) || $limit <= 0) {
-            return [];
-        }
-    
         //Query to fetch students with pagination
         $this->db->query('SELECT * FROM students ORDER BY created_at LIMIT :offset, :limit');
         $this->db->bind(':offset', $offset, PDO::PARAM_INT);
@@ -23,11 +18,6 @@ class Student
     }
 
     public function getStudentById($id) {
-        //Validate ID
-        if (!is_int($id) || $id <= 0) {
-            return null;
-        }
-    
         //Query to fetch a single student by ID
         $this->db->query('SELECT * FROM students WHERE id = :id');
         $this->db->bind(':id', $id, PDO::PARAM_INT);
@@ -44,12 +34,6 @@ class Student
     }
 
     public function addStudent($data) {
-        //Validate data
-        if (empty($data['name']) || empty($data['group']) ||
-            empty($data['gender']) || empty($data['birthday'])) {
-            return false;
-        }
-        
         //Query to insert a new student
         $this->db->query('INSERT INTO students (name, group, gender, birthday) 
                         VALUES (:name, :group, :gender, :birthday)');
@@ -68,13 +52,6 @@ class Student
     }
 
     public function updateStudent($id, $data) {
-        //Validate ID and data
-        if (!is_int($id) || $id <= 0 || empty($data['name']) || 
-            empty($data['group']) || empty($data['gender']) ||
-            empty($data['birthday'])) {
-            return false;
-        }
-
         //Query to update a student
         $this->db->query('UPDATE students SET name = :name, group = :group,
                         gender = :gender, birthday = :birthday WHERE id = :id');
@@ -94,11 +71,6 @@ class Student
     }
 
     public function deleteStudent($id) {
-        //Validate ID
-        if (!is_int($id) || $id <= 0) {
-            return false;
-        }
-
         //Query to delete a student
         $this->db->query('DELETE FROM students WHERE id = :id');
         $this->db->bind(':id', $id);
