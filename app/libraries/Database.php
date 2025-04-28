@@ -52,6 +52,9 @@ class Database
                 case is_null($value):
                     $type = PDO::PARAM_NULL;
                     break;
+                case is_string($value):
+                    $type = PDO::PARAM_STR;
+                    break;
                 default:
                     $type = PDO::PARAM_INT;
             }
@@ -74,7 +77,7 @@ class Database
     //Get single record as object
     public function single() {
         $this->execute();
-        return $this->stmt->fecth(PDO::FETCH_OBJ);
+        return $this->stmt->fetch(PDO::FETCH_OBJ) ?: null;
     }
 
     //Get the row count
