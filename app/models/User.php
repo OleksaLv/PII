@@ -1,5 +1,5 @@
 <?php
-class Student 
+class User 
 {
     private $db;
 
@@ -9,11 +9,11 @@ class Student
 
     public function register($data) {
         //Query to insert a new user
-        $this->db->query('INSERT INTO students (name, email, password) VALUES (:name, :email, :password)');
+        $this->db->query('INSERT INTO users (name, email, password) VALUES (:name, :email, :password)');
 
         $this->db->bind(':name', $data['name']);
         $this->db->bind(':email', $data['email']);
-        $this->db->bind(':password', password_hash($data['password'], PASSWORD_DEFAULT));
+        $this->db->bind(':password', $data['password']);
 
         //Execute
         if ($this->db->execute()) {
@@ -25,7 +25,7 @@ class Student
 
     public function login($email, $password) {
         //Get user by email
-        $this->db->query('SELECT * FROM students WHERE email = :email');
+        $this->db->query('SELECT * FROM users WHERE email = :email');
         $this->db->bind(':email', $email);
 
         $row = $this->db->single(); 

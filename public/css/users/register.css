@@ -160,6 +160,20 @@
     margin-top: 0.3rem;
 }
 
+/* Highlight invalid input fields */
+.is-invalid {
+    border-color: #ff3e5b; /* Red border for invalid fields */
+    box-shadow: 0 0 5px #ff3e5b;
+}
+
+/* Error message styling */
+.invalid-feedback {
+    display: block;
+    color: #ff3e5b;
+    font-size: 0.8rem;
+    margin-top: 0.3rem;
+}
+
 /* Animations */
 .register-form {
     animation: modalOpen 0.3s;
