@@ -66,13 +66,13 @@ class Students extends Controller
             //Process form data
             $data = [
                 'group_id' => trim($_POST['modal-group'] ?? ''),
-                'name' => trim(($_POST['modal-first-name'] ?? '') . ' ' . ($_POST['modal-last-name'] ?? '')),
                 'first_name' => trim($_POST['modal-first-name'] ?? ''),
                 'last_name' => trim($_POST['modal-last-name'] ?? ''),
                 'gender' => strtolower(trim($_POST['modal-gender'] ?? '')),
-                'birthday' => trim($_POST['modal-birthday'] ?? ''),
+                'birthday' => $_POST['modal-birthday'] ?? '',
                 'group_id_err' => '',
-                'name_err' => '',
+                'first_name_err' => '',
+                'last_name_err' => '',
                 'gender_err' => '',
                 'birthday_err' => ''
             ];
@@ -82,9 +82,14 @@ class Students extends Controller
                 $data['group_id_err'] = 'Please select a group';
             }
     
-            //Validate name
-            if (empty($data['first_name']) || empty($data['last_name'])) {
-                $data['name_err'] = 'Please enter a full name';
+            //Validate first_name
+            if (empty($data['first_name'])) {
+                $data['first_name_err'] = 'Please enter first name';
+            }
+
+            //Validate last_name
+            if(empty($data['last_name'])) {
+                $data['last_name_err'] = 'Please enter last name';
             }
     
             //Validate gender
@@ -98,10 +103,18 @@ class Students extends Controller
             }
     
             //Make sure no errors
-            if (empty($data['group_id_err']) && empty($data['name_err']) && 
-                empty($data['gender_err']) && empty($data['birthday_err'])) {
+            if (empty($data['group_id_err']) && empty($data['first_name_err']) &&
+                empty($data['first_name_err']) && empty($data['gender_err']) &&
+                empty($data['birthday_err'])) {
+                //validated
                 
-                //Add student to database
+                //Add email as first_name.last_name.pz@lpnu.ua
+                $data['email'] = strtolower(trim($_POST['modal-first-name'] ?? '')) . "." . 
+                strtolower(trim($_POST['modal-last-name'] ?? '')) . ".pz@lpnu.ua";
+
+                //Hash password (password = birthday)
+                $data['password'] = password_hash($_POST['modal-birthday'], PASSWORD_DEFAULT);
+
                 if ($this->studentModel->addStudent($data)) {
                     //Set flash message
                     flash('student_message', 'Student added successfully');
@@ -132,14 +145,14 @@ class Students extends Controller
                     'modal_window' => 'add',
                     // Form data
                     'group_id' => $data['group_id'],
-                    'name' => $data['name'],
                     'first_name' => $data['first_name'],
                     'last_name' => $data['last_name'],
                     'gender' => $data['gender'],
                     'birthday' => $data['birthday'],
                     // Error messages
                     'group_id_err' => $data['group_id_err'],
-                    'name_err' => $data['name_err'],
+                    'first_name_err' => $data['first_name_err'],
+                    'last_name_err' => $data['last_name_err'],
                     'gender_err' => $data['gender_err'],
                     'birthday_err' => $data['birthday_err']
                 ];
@@ -170,14 +183,14 @@ class Students extends Controller
                 'modal_window' => 'add',
                 // Initialize form data with empty values
                 'group_id' => '',
-                'name' => '',
                 'first_name' => '',
                 'last_name' => '',
                 'gender' => '',
                 'birthday' => '',
                 // Initialize error messages
                 'group_id_err' => '',
-                'name_err' => '',
+                'first_name_err' => '',
+                'last_name_err' => '',
                 'gender_err' => '',
                 'birthday_err' => ''
             ];
@@ -193,13 +206,13 @@ class Students extends Controller
             $data = [
                 'id' => $id,
                 'group_id' => trim($_POST['modal-group'] ?? ''),
-                'name' => trim(($_POST['modal-first-name'] ?? '') . ' ' . ($_POST['modal-last-name'] ?? '')),
                 'first_name' => trim($_POST['modal-first-name'] ?? ''),
                 'last_name' => trim($_POST['modal-last-name'] ?? ''),
                 'gender' => strtolower(trim($_POST['modal-gender'] ?? '')),
                 'birthday' => trim($_POST['modal-birthday'] ?? ''),
                 'group_id_err' => '',
-                'name_err' => '',
+                'first_name_err' => '',
+                'last_name_err' => '',
                 'gender_err' => '',
                 'birthday_err' => ''
             ];
@@ -209,9 +222,14 @@ class Students extends Controller
                 $data['group_id_err'] = 'Please select a group';
             }
     
-            //Validate name
-            if (empty($data['first_name']) || empty($data['last_name'])) {
-                $data['name_err'] = 'Please enter a full name';
+            //Validate first_name
+            if (empty($data['first_name'])) {
+                $data['first_name_err'] = 'Please enter first name';
+            }
+
+            //Validate last_name
+            if(empty($data['last_name'])) {
+                $data['last_name_err'] = 'Please enter last name';
             }
     
             //Validate gender
@@ -225,8 +243,9 @@ class Students extends Controller
             }
     
             //Make sure no errors
-            if (empty($data['group_id_err']) && empty($data['name_err']) && 
-                empty($data['gender_err']) && empty($data['birthday_err'])) {
+            if (empty($data['group_id_err']) && empty($data['first_name_err']) &&
+                empty($data['first_name_err']) && empty($data['gender_err']) &&
+                empty($data['birthday_err'])) {
                 
                 // Get current student data to check if anything changed
                 $currentStudent = $this->studentModel->getStudentById($id);
@@ -234,7 +253,8 @@ class Students extends Controller
                 // Check if any data has changed
                 if (
                     $currentStudent->group_id != $data['group_id'] ||
-                    $currentStudent->name != $data['name'] ||
+                    $currentStudent->first_name != $data['first_name'] ||
+                    $currentStudent->last_name != $data['last_name'] ||
                     $currentStudent->gender != $data['gender'] ||
                     $currentStudent->birthday != $data['birthday']
                 ) {
@@ -274,14 +294,14 @@ class Students extends Controller
                     'student_id' => $id,
                     //Form data
                     'group_id' => $data['group_id'],
-                    'name' => $data['name'],
                     'first_name' => $data['first_name'],
                     'last_name' => $data['last_name'],
                     'gender' => $data['gender'],
                     'birthday' => $data['birthday'],
                     //Error messages
                     'group_id_err' => $data['group_id_err'],
-                    'name_err' => $data['name_err'],
+                    'first_name_err' => $data['first_name_err'],
+                    'last_name_err' => $data['last_name_err'],
                     'gender_err' => $data['gender_err'],
                     'birthday_err' => $data['birthday_err']
                 ];
@@ -298,11 +318,6 @@ class Students extends Controller
             if (!$student) {
                 redirect('students');
             }
-            
-            //Split name into first and last name
-            $nameParts = explode(' ', $student->name, 2);
-            $firstName = $nameParts[0] ?? '';
-            $lastName = $nameParts[1] ?? '';
             
             //Get the groups for the dropdown
             $groups = $this->studentModel->getGroups();
@@ -326,14 +341,14 @@ class Students extends Controller
                 'student_id' => $id,
                 //Form data with student information
                 'group_id' => $student->group_id,
-                'name' => $student->name,
-                'first_name' => $firstName,
-                'last_name' => $lastName,
+                'first_name' => $student->first_name,
+                'last_name' => $student->last_name,
                 'gender' => $student->gender,
                 'birthday' => $student->birthday,
                 //Initialize error messages
                 'group_id_err' => '',
-                'name_err' => '',
+                'fist_name_err' => '',
+                'last_name_err' => '',
                 'gender_err' => '',
                 'birthday_err' => ''
             ];

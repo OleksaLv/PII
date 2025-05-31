@@ -32,7 +32,7 @@
           <input type="checkbox" class="student-checkbox" id="select-student-<?= $student->id ?>" data-student-id="<?= $student->id ?>">
         </td>
         <td><?= $student->group_name ?></td>
-        <td><?= $student->name ?></td>
+        <td><?= $student->first_name . " " . $student->last_name ?></td>
         <td><?= ($student->gender == 'male') ? 'M' : 'F' ?></td>
         <td><?= $student->birthday ?></td>
         <td><div class="offline"></div></td>

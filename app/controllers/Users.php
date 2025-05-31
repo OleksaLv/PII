@@ -18,7 +18,8 @@ class Users extends Controller
     public function register() {
         //Check for POST
         if($_SERVER['REQUEST_METHOD'] == 'POST') {
-            //Process the form
+            //Get the groups for the dropdown
+            $groups = $this->userModel->getGroups();
 
             //Sanitaze POST data
             $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
@@ -27,19 +28,50 @@ class Users extends Controller
             $data = [
                 'css' => ['users/register.css'],
                 'title' => 'Register',
-                'name' => trim($_POST['name']),
+                'groups' => $groups,
+                //Form data
+                'group_id' => trim($_POST['group']),
+                'first_name' => trim($_POST['first-name']),
+                'last_name' => trim($_POST['last-name']),
+                'gender' => strtolower(trim($_POST['gender'])),
+                'birthday' => trim($_POST['birthday']),
                 'email' => trim($_POST['email']),
                 'password' => trim($_POST['password']),
                 'confirm_password' => trim($_POST['confirm_password']),
-                'name_err' => '',
+                //Error messages
+                'group_id_err' => '',
+                'first_name_err' => '',
+                'last_name_err' => '',
+                'gender_err' => '',
+                'birthday_err' => '',
                 'email_err' => '',
                 'password_err' => '',
                 'confirm_password_err' => ''
             ];
 
-            //Validate name
-            if(empty($data['name'])) {
-                $data['name_err'] = 'Please enter name';
+            //Validate group
+            if (empty($data['group_id'])) {
+                $data['group_id_err'] = 'Please select a group';
+            }
+    
+            //Validate first_name
+            if (empty($data['first_name'])) {
+                $data['first_name_err'] = 'Please enter first name';
+            }
+
+            //Validate last_name
+            if(empty($data['last_name'])) {
+                $data['last_name_err'] = 'Please enter last name';
+            }
+
+            //Validate gender
+            if (empty($data['gender'])) {
+                $data['gender_err'] = 'Please select gender';
+            }
+    
+            //Validate birthday
+            if (empty($data['birthday'])) {
+                $data['birthday_err'] = 'Please enter birthday';
             }
 
             //Validate email
@@ -71,8 +103,10 @@ class Users extends Controller
             }
 
             //Make sure errors are empty
-            if(empty($data['name_err']) && empty($data['email_err']) 
-                && empty($data['password_err']) && empty($data['confirm_password_err'])) {
+            if(empty($data['group_id_err']) && empty($data['first_name_err']) &&
+                empty($data['last_name_err']) && empty($data['email_err']) &&
+                empty($data['gender_err']) && empty($data['birthday_err']) &&
+                empty($data['password_err']) && empty($data['confirm_password_err'])) {
                 //validated
                 
                 //Hash password
@@ -90,15 +124,29 @@ class Users extends Controller
                 $this->view('users/register', $data);
             }
         } else {
+            //Get the groups for the dropdown
+            $groups = $this->userModel->getGroups();
+            
             //Init data
             $data = [
                 'css' => ['users/register.css'],
                 'title' => 'Register',
-                'name' => '',
+                'groups' => $groups,
+                //Form data
+                'group_id' => '',
+                'first_name' => '',
+                'last_name' => '',
+                'gender' => '',
+                'birthday' => '',
                 'email' => '',
                 'password' => '',
                 'confirm_password' => '',
-                'name_err' => '',
+                //Error messages
+                'group_id_err' => '',
+                'first_name_err' => '',
+                'last_name_err' => '',
+                'gender_err' => '',
+                'birthday_err' => '',
                 'email_err' => '',
                 'password_err' => '',
                 'confirm_password_err' => ''
@@ -158,7 +206,7 @@ class Users extends Controller
                 } else {
                     $data['password_err'] = 'Password incorrect';
 
-                    $this->view('students', $data);
+                    $this->view('users/login', $data);
                 }
             } else {
                 //Load view with errors
@@ -183,15 +231,23 @@ class Users extends Controller
 
     public function createUserSession($user) {
         $_SESSION['user_id'] = $user->id;
+        $_SESSION['user_group'] = $user->group;
+        $_SESSION['user_first_name'] = $user->first_name;
+        $_SESSION['user_last_name'] = $user->last_name;
+        $_SESSION['user_gender'] = $user->gender;
+        $_SESSION['user_birthday'] = $user->birthday;
         $_SESSION['user_email'] = $user->email;
-        $_SESSION['user_name'] = $user->name;
         redirect('students');
     }
 
     public function logout() {
         unset($_SESSION['user_id']);
+        unset($_SESSION['user_group']);
+        unset($_SESSION['user_first_name']);
+        unset($_SESSION['user_last_name']);
+        unset($_SESSION['user_gender']);
+        unset($_SESSION['user_birthday']);
         unset($_SESSION['user_email']);
-        unset($_SESSION['user_name']);
         session_destroy();
         redirect('users/login');
     }

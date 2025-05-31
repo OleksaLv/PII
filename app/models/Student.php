@@ -42,13 +42,17 @@ class Student
 
     public function addStudent($data) {
         //Query to insert a new student
-        $this->db->query('INSERT INTO students (name, group_id, gender, birthday) 
-                        VALUES (:name, :group_id, :gender, :birthday)');
+        $this->db->query('INSERT INTO students (first_name, last_name, group_id, gender,
+                        birthday, email, password) VALUES (:first_name, :last_name,
+                        :group_id, :gender, :birthday, :email, :password)');
 
-        $this->db->bind(':name', $data['name']);
+        $this->db->bind(':first_name', $data['first_name']);
+        $this->db->bind(':last_name', $data['last_name']);
         $this->db->bind(':group_id', $data['group_id']);
         $this->db->bind(':gender', $data['gender']);
         $this->db->bind(':birthday', $data['birthday']);
+        $this->db->bind(':email', $data['email']);
+        $this->db->bind(':password', $data['password']);
 
         //Execute
         if ($this->db->execute()) {
@@ -60,11 +64,13 @@ class Student
 
     public function updateStudent($data, $id) {
         // Query to update a student
-        $this->db->query('UPDATE students SET name = :name, group_id = :group_id,
-                        gender = :gender, birthday = :birthday WHERE id = :id');
+        $this->db->query('UPDATE students SET first_name = :first_name, 
+                        last_name = :last_name, group_id = :group_id, gender = :gender,
+                        birthday = :birthday WHERE id = :id');
     
         $this->db->bind(':id', $id);
-        $this->db->bind(':name', $data['name']);
+        $this->db->bind(':first_name', $data['first_name']);
+        $this->db->bind(':last_name', $data['last_name']);
         $this->db->bind(':group_id', $data['group_id']);
         $this->db->bind(':gender', $data['gender']);
         $this->db->bind(':birthday', $data['birthday']);
