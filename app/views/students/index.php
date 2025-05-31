@@ -26,22 +26,22 @@
             <th>Options</th>
           </tr>
           <?php foreach($data['students'] as $student): ?>
-            <tr>
-              <td>
-                <label for="select-student-<?= $student->id ?>" class="visually-hidden">Select <?= $student->name ?></label>
-                <input type="checkbox" class="student-checkbox" id="select-student-<?= $student->id ?>">
-              </td>
-              <td><?= $student->group_name ?></td>
-              <td><?= $student->name ?></td>
-              <td><?= ($student->gender == 'male') ? 'M' : 'F' ?></td>
-              <td><?= $student->birthday ?></td>
-              <td><div class="offline"></div></td>
-              <td>
-                <a href="<?= URLROOT ?>/students/edit/<?= $student->id ?>" class="edit-btn">✎</a>
-                <a href="<?= URLROOT ?>/students/delete/<?= $student->id ?>" class="delete-btn">x</a>
-              </td>
-            </tr>
-          <?php endforeach; ?>
+      <tr>
+        <td>
+          <label for="select-student-<?= $student->id ?>" class="visually-hidden">Select <?= $student->name ?></label>
+          <input type="checkbox" class="student-checkbox" id="select-student-<?= $student->id ?>" data-student-id="<?= $student->id ?>">
+        </td>
+        <td><?= $student->group_name ?></td>
+        <td><?= $student->name ?></td>
+        <td><?= ($student->gender == 'male') ? 'M' : 'F' ?></td>
+        <td><?= $student->birthday ?></td>
+        <td><div class="offline"></div></td>
+        <td>
+          <a href="<?= URLROOT ?>/students/edit/<?= $student->id ?>" class="edit-btn">✎</a>
+          <a href="javascript:void(0);" class="delete-btn" data-student-id="<?= $student->id ?>">x</a>
+        </td>
+      </tr>
+    <?php endforeach; ?>
         </table>
       </div>
       
@@ -81,11 +81,12 @@
       </div>
       <hr>
       <div class="modal-body">
-        <p id="delete-message">Are you sure you want to delete <?= $data['student_name'] ?? 'this student' ?>?</p>
+        <p id="delete-message">Are you sure you want to delete the selected student(s)?</p>
       </div>
       <hr>
       <div class="modal-footer">
-        <form action="<?= URLROOT ?>/students/delete/<?= $data['student_id'] ?? '' ?>" method="post">
+        <form action="<?= URLROOT ?>/students/delete/" method="post" id="delete-form">
+          <input type="hidden" name="student_ids" id="student-ids-input">
           <button type="submit" id="confirm-delete">Delete</button>
           <a href="<?= URLROOT ?>/students" id="cancel-delete">Cancel</a>
         </form>
@@ -160,5 +161,6 @@
       </form>
     </div>
   </div>
-  
+
+  <script src="<?= URLROOT ?>/js/students/index.js"></script>
 <?php require APPROOT . '/views/inc/footer.php'; ?>

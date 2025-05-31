@@ -343,40 +343,98 @@ class Students extends Controller
     }
     
     public function delete($id = null) {
-        //Check for POST request
+        // Check for POST request
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            //Get the student to confirm they exist
-            $student = $this->studentModel->getStudentById($id);
-            
-            if (!$student) {
-                flash('student_message', 'Student not found', 'alert alert-danger');
+            // Check if we have student IDs to delete
+            if (empty($id) && empty($_POST['student_ids'])) {
+                flash('student_message', 'No students selected for deletion', 'alert alert-danger');
                 redirect('students');
             }
             
-            // Delete the student
-            if ($this->studentModel->deleteStudent($id)) {
-                flash('student_message', 'Student deleted successfully');
+            // Get student IDs from either URL parameter or POST data
+            $studentIds = [];
+            if (!empty($id)) {
+                // Handle ID format like "1_2_3" - using underscore as separator
+                $studentIds = explode('_', $id);
+            } elseif (!empty($_POST['student_ids'])) {
+                // Handle comma-separated IDs from form input
+                $studentIds = explode(',', $_POST['student_ids']);
+            }
+            
+            // Validate that IDs exist
+            $studentIds = array_filter($studentIds, function($id) {
+                return is_numeric($id) && $id > 0;
+            });
+            
+            if (empty($studentIds)) {
+                flash('student_message', 'Invalid student selection', 'alert alert-danger');
                 redirect('students');
+            }
+            
+            // Track success/failure
+            $successCount = 0;
+            $failCount = 0;
+            
+            // Process each student ID
+            foreach ($studentIds as $studentId) {
+                // Get the student to confirm they exist
+                $student = $this->studentModel->getStudentById($studentId);
+                
+                if (!$student) {
+                    $failCount++;
+                    continue; // Skip this ID and move to next
+                }
+                
+                // Delete the student
+                if ($this->studentModel->deleteStudent($studentId)) {
+                    $successCount++;
+                } else {
+                    $failCount++;
+                }
+            }
+            
+            // Set appropriate flash message
+            if ($successCount > 0) {
+                if ($failCount > 0) {
+                    flash('student_message', "Deleted $successCount students. Failed to delete $failCount students.", 'alert alert-warning');
+                } else {
+                    if ($successCount == 1) {
+                        flash('student_message', 'Student deleted successfully');
+                    } else {
+                        flash('student_message', "$successCount students deleted successfully");
+                    }
+                }
             } else {
-                die('Something went wrong');
+                flash('student_message', 'Failed to delete students', 'alert alert-danger');
             }
-        } else {
-            //If it's a GET request, show the confirmation modal
             
-            //If no ID specified, redirect to students page
+            redirect('students');
+        } else {
+            // If it's a GET request, show the confirmation modal
+            
+            // If no ID specified, redirect to students page
             if (!$id) {
                 redirect('students');
             }
             
-            //Get student
-            $student = $this->studentModel->getStudentById($id);
+            // Parse the IDs for display in the modal
+            $studentIds = explode('+', $id);
+            $studentCount = count($studentIds);
             
-            //Check if student exists
-            if (!$student) {
-                redirect('students');
+            // For multiple students, we don't need to verify each one for the confirmation
+            // We just need to know how many will be affected
+            
+            // For a single student, get details for confirmation
+            $studentName = '';
+            if ($studentCount == 1) {
+                $student = $this->studentModel->getStudentById($studentIds[0]);
+                if (!$student) {
+                    redirect('students');
+                }
+                $studentName = $student->name;
             }
             
-            //Get students for table
+            // Get students for table
             $page = 1;
             $limit = 4;
             $totalStudents = $this->studentModel->getStudentCount();
@@ -392,7 +450,8 @@ class Students extends Controller
                 'total_pages' => $totalPages,
                 'modal_window' => 'delete',
                 'student_id' => $id,
-                'student_name' => $student->name
+                'student_count' => $studentCount,
+                'student_name' => $studentName
             ];
             
             $this->view('students/index', $data);
