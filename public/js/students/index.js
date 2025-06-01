@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // If no checkboxes are selected, just use the clicked student's ID
         if (selectedCheckboxes.length === 0) {
           studentIdsInput.value = clickedStudentId;
-          deleteForm.action = '<?= URLROOT ?>/students/delete/' + clickedStudentId;
+          deleteForm.action = URLROOT + '/students/delete/' + clickedStudentId;
           document.getElementById('delete-message').textContent = 'Are you sure you want to delete this student?';
         } else {
           // Collect all selected student IDs
@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', function() {
           studentIdsInput.value = selectedIds.join(',');
           
           // Update the form action - using underscore (_) as separator instead of plus (+)
-          deleteForm.action = '<?= URLROOT ?>/students/delete/' + selectedIds.join('_');
+          deleteForm.action = URLROOT + '/students/delete/' + selectedIds.join('_');
           
           // Update the confirmation message
           document.getElementById('delete-message').textContent = `Are you sure you want to delete ${selectedIds.length} student(s)?`;

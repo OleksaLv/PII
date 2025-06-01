@@ -31,6 +31,10 @@
   </div>
 </div>
 
+<script>
+  // Make URLROOT available globally to JavaScript
+  window.URLROOT = '<?= URLROOT ?>';
+</script>
 <script src="<?= URLROOT ?>/js/main.js"></script>
 </body>
 </html>
