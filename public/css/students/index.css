@@ -52,6 +52,15 @@ h1::after {
     box-shadow: 0 0 8px var(--neon-pink);
 }
 
+/* Alert Messages */
+.alert-success {
+    color: var(--neon-green);
+}
+
+.alert-danger {
+    color: #ff3e5b;
+}
+
 /* Add Button */
 #add {
     display: flex;

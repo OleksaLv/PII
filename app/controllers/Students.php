@@ -121,7 +121,10 @@ class Students extends Controller
                     //Redirect to students page
                     redirect('students');
                 } else {
-                    die('Something went wrong');
+                    //Set flash message
+                    flash('student_message', 'Student is already added', 'alert alert-danger');
+                    //Redirect to students page
+                    redirect('students');
                 }
             } else {
                 //Get the groups for the dropdown

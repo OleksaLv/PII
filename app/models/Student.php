@@ -41,6 +41,11 @@ class Student
     }
 
     public function addStudent($data) {
+        // Check if email already exists
+        if ($this->findUserByEmail($data['email'])) {
+            return false;
+        }
+        
         //Query to insert a new student
         $this->db->query('INSERT INTO students (first_name, last_name, group_id, gender,
                         birthday, email, password) VALUES (:first_name, :last_name,
@@ -90,6 +95,21 @@ class Student
 
         //Execute
         if ($this->db->execute()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function findUserByEmail($email) {
+        //Query to check if user with email exists
+        $this->db->query('SELECT * FROM students WHERE email = :email');
+        $this->db->bind(':email', $email);
+
+        $this->db->single(); 
+
+        //Check row
+        if($this->db->rowCount() > 0) {
             return true;
         } else {
             return false;
