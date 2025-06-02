@@ -28,12 +28,12 @@
       <a class="register" href="<?= URLROOT ?>/users/register">Register</a>
       <a class="login" href="<?= URLROOT ?>/users/login">Login</a>
     <?php else : ?>
-      <a id="notifications" href="<?= URLROOT ?>/messages">
+      <a id="notifications" href="http://localhost:3000/chats">
         <img id="notification-icon" src="<?= URLROOT ?>/img/bell.png" alt="notifications">
       </a>
       <a id="profile" href="<?= URLROOT ?>/users/profile">
         <img id="profile-icon" src="<?= URLROOT ?>/img/profile.jpg" alt="profile-icon">
-        <p id="profile-name">Oleksii Mahinskyi</p>
+        <p id="profile-name"><?= $_SESSION['user_first_name'] . " " . $_SESSION['user_last_name'] ?></p>
       </a>
     <?php endif; ?> 
   </header>

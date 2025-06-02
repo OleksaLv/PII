@@ -1,0 +1,17 @@
+{
+    "name": "my-node-redirect-project",
+    "version": "1.0.0",
+    "main": "src/server.js",
+    "scripts": {
+        "start": "node src/server.js"
+    },
+    "dependencies": {
+        "body-parser": "^2.2.0",
+        "express": "^4.17.1",
+        "express-session": "^1.18.1",
+        "mongodb": "^6.16.0",
+        "mongoose": "^8.15.1",
+        "pug": "^3.0.3",
+        "socket.io": "^4.8.1"
+    }
+}
