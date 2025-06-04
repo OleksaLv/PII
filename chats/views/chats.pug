@@ -3,20 +3,55 @@ extends layout
 block content
   section
     h1 Chats
-    #chat-container
-      #chat-messages
-        .message.received
-          .message-header
-            img(src=`${ASSETS_PATH}/img/profile.jpg`, alt="profile")
-            span.sender Admin
-            span.time 10:30 AM
-          .message-content Welcome to the chat system!
+    #chat-list
+      #chat-list-header
+        h2 Conversations
+      #chat-list-content
+        .chat-item.active
+          img(src=`${ASSETS_PATH}/img/profile.jpg`, alt="profile")
+          .chat-item-info
+            .chat-item-name Admin
+            .chat-item-last Welcome to the system!
+          .chat-item-time 10:30
         
-        .message.sent
-          .message-header
-            span.time 10:32 AM
-          .message-content Thank you! This looks great.
-      
-      #chat-input
-        input(type="text", placeholder="Type your message...", id="messageInput")
-        button(type="button", id="sendButton") Send
+        .chat-item
+          img(src=`${ASSETS_PATH}/img/profile.jpg`, alt="profile")
+          .chat-item-info
+            .chat-item-name John K.
+            .chat-item-last Hey there! How are you?
+          .chat-item-time 09:15
+        
+        .chat-item
+          img(src=`${ASSETS_PATH}/img/profile.jpg`, alt="profile")
+          .chat-item-info
+            .chat-item-name Sarah M.
+            .chat-item-last Can we meet tomorrow?
+          .chat-item-time 08:45
+        
+        .chat-item
+          img(src=`${ASSETS_PATH}/img/profile.jpg`, alt="profile")
+          .chat-item-info
+            .chat-item-name Mike D.
+            .chat-item-last Thanks for your help!
+          .chat-item-time Yesterday
+        
+        .chat-item
+          img(src=`${ASSETS_PATH}/img/profile.jpg`, alt="profile")
+          .chat-item-info
+            .chat-item-name Anna P.
+            .chat-item-last See you at the meeting
+          .chat-item-time Yesterday
+        
+        .chat-item
+          img(src=`${ASSETS_PATH}/img/profile.jpg`, alt="profile")
+          .chat-item-info
+            .chat-item-name Tom W.
+            .chat-item-last The project is ready
+          .chat-item-time Monday
+        
+        .chat-item
+          img(src=`${ASSETS_PATH}/img/profile.jpg`, alt="profile")
+          .chat-item-info
+            .chat-item-name Lisa R.
+            .chat-item-last Thanks for the update
+          .chat-item-time Sunday

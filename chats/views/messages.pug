@@ -1,0 +1,59 @@
+extends layout
+
+block content
+  section
+    h1 Messages
+    #chat-container
+      #chat-header
+        img(src=`${ASSETS_PATH}/img/profile.jpg`, alt="profile")
+        #chat-header-info
+          h3 Admin
+          .status Online
+      
+      #chat-messages
+        .message.received
+          .message-header
+            img(src=`${ASSETS_PATH}/img/profile.jpg`, alt="profile")
+            span.sender Admin
+            span.time 10:30 AM
+          .message-content Welcome to the chat system! I hope you find everything you need here.
+        
+        .message.sent
+          .message-header
+            span.time 10:32 AM
+          .message-content Thank you! This looks great. I'm excited to use this system.
+        
+        .message.received
+          .message-header
+            img(src=`${ASSETS_PATH}/img/profile.jpg`, alt="profile")
+            span.sender Admin
+            span.time 10:35 AM
+          .message-content Perfect! If you have any questions, don't hesitate to ask. We're here to help you get started.
+        
+        .message.sent
+          .message-header
+            span.time 10:36 AM
+          .message-content Will do, thanks again!
+        
+        .message.received
+          .message-header
+            img(src=`${ASSETS_PATH}/img/profile.jpg`, alt="profile")
+            span.sender Admin
+            span.time 10:40 AM
+          .message-content You're welcome! Have a great day and don't hesitate to reach out if you need anything else.
+        
+        .message.sent
+          .message-header
+            span.time 10:45 AM
+          .message-content Perfect, I really appreciate the support. This platform seems very user-friendly.
+        
+        .message.received
+          .message-header
+            img(src=`${ASSETS_PATH}/img/profile.jpg`, alt="profile")
+            span.sender Admin
+            span.time 10:50 AM
+          .message-content That's great to hear! We work hard to make it as intuitive as possible.
+      
+      #chat-input
+        input(type="text", placeholder="Type your message...", id="messageInput")
+        button(type="button", id="sendButton") Send

@@ -160,3 +160,18 @@ app.get("/chats", requireAuth, (req, res, next) => {
     
     res.status(200).render("chats", payload);
 });
+
+app.get("/messages", requireAuth, (req, res, next) => {
+    const crypto = require('crypto');
+    const authToken = crypto.createHash('md5').update(req.user.id + req.user.email + 'cheese and potato').digest('hex');
+    
+    var payload = {
+        pageTitle: "Messages",
+        user: req.user,
+        phpSession: req.phpSession,
+        css: ['messages.css'],
+        authToken: authToken
+    };
+    
+    res.status(200).render("messages", payload);
+});
