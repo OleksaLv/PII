@@ -1,39 +1,22 @@
-doctype html
-html(lang="en")
-    head
-        meta(charset="UTF-8")
-        meta(name="viewport", content="width=device-width, initial-scale=1.0")
-        title= pageTitle
-        style.
-            body {
-                font-family: Arial, sans-serif;
-                margin: 40px;
-                background-color: #f5f5f5;
-            }
-            .back-link {
-                display: inline-block;
-                margin-top: 20px;
-                padding: 10px 15px;
-                background-color: #007bff;
-                color: white;
-                text-decoration: none;
-                border-radius: 5px;
-            }
-            .back-link:hover {
-                background-color: #0056b3;
-            }
-    body
-        h1= pageTitle
+extends layout
+
+block content
+  section
+    h1 Chats
+    #chat-container
+      #chat-messages
+        .message.received
+          .message-header
+            img(src=`${ASSETS_PATH}/img/profile.jpg`, alt="profile")
+            span.sender Admin
+            span.time 10:30 AM
+          .message-content Welcome to the chat system!
         
-        if user
-            p Welcome, #{user.first_name} #{user.last_name}!
-            p Group: #{user.group_name || 'No group assigned'}
-            p Email: #{user.email}
-        else
-            p No user information available
-        
-        div
-            h2 Chat System
-            p Chat functionality will be implemented here
-        
-        a.back-link(href="http://localhost/PII") Go Back to PII App
+        .message.sent
+          .message-header
+            span.time 10:32 AM
+          .message-content Thank you! This looks great.
+      
+      #chat-input
+        input(type="text", placeholder="Type your message...", id="messageInput")
+        button(type="button", id="sendButton") Send

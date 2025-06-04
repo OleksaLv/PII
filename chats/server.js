@@ -20,6 +20,13 @@ app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "public")));
 
+// Serve PHP public folder assets
+app.use('/assets', express.static(path.join(__dirname, '..', 'public')));
+
+// Global variables for templates
+app.locals.ASSETS_PATH = '/assets';
+app.locals.PHP_BASE_URL = 'http://localhost/pii';
+
 // Configure session with PHP-compatible settings
 app.use(session({
     name: 'nodejs_session',
@@ -140,10 +147,15 @@ async function requireAuth(req, res, next) {
 }
 
 app.get("/chats", requireAuth, (req, res, next) => {
+    const crypto = require('crypto');
+    const authToken = crypto.createHash('md5').update(req.user.id + req.user.email + 'cheese and potato').digest('hex');
+    
     var payload = {
         pageTitle: "Chats",
         user: req.user,
-        phpSession: req.phpSession
+        phpSession: req.phpSession,
+        css: ['chats.css'],
+        authToken: authToken
     };
     
     res.status(200).render("chats", payload);

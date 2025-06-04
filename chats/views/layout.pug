@@ -1,0 +1,58 @@
+doctype html
+html(lang="en")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    link(rel="stylesheet", href=`${ASSETS_PATH}/css/general.css`)
+    link(rel="stylesheet", href=`${ASSETS_PATH}/css/header.css`)
+    link(rel="stylesheet", href=`${ASSETS_PATH}/css/notifications-popup.css`)
+    link(rel="stylesheet", href=`${ASSETS_PATH}/css/profile-popup.css`)
+    link(rel="stylesheet", href=`${ASSETS_PATH}/css/navigation.css`)
+    if css
+      each cssFile in css
+        link(rel="stylesheet", href=`${ASSETS_PATH}/css/${cssFile}`)
+    title= pageTitle ? `Studnet - ${pageTitle}` : 'Studnet'
+  
+  body
+    header
+      a#site-name(href=`${PHP_BASE_URL}/students`) Studnet
+      .spacing
+      a#notifications(href=`http://localhost:3000/chats?user_id=${user.id}&auth_token=${authToken}`)
+        img#notification-icon(src=`${ASSETS_PATH}/img/bell.png`, alt="notifications")
+      a#profile(href=`${PHP_BASE_URL}/users/profile`)
+        img#profile-icon(src=`${ASSETS_PATH}/img/profile.jpg`, alt="profile-icon")
+        p#profile-name= `${user.first_name} ${user.last_name}`
+    
+    #content
+      nav
+        ul
+          li: a#dashboard(href=`${PHP_BASE_URL}/students/dashboard`) Dashboard
+          li: a#students(href=`${PHP_BASE_URL}/students`) Students
+          li: a#tasks(href=`${PHP_BASE_URL}/students/tasks`) Tasks      
+      block content
+    
+    #notifications-popup.popup
+      .popup-body
+        .notification
+          div
+            img(src=`${ASSETS_PATH}/img/profile.jpg`, alt="profile")
+            p Admin
+          p Hello, my dear friend. I'm glad
+        .notification
+          div
+            img(src=`${ASSETS_PATH}/img/profile.jpg`, alt="profile")
+            p John K.
+          p James Bond has sent you a message
+        .notification
+          div
+            img(src=`${ASSETS_PATH}/img/profile.jpg`, alt="profile")
+            p Ann S.
+          p James Bond has sent you an age
+    
+    #profile-popup.popup
+      .popup-body
+        a(href=`${PHP_BASE_URL}/users/profile`) Profile
+        a(href=`${PHP_BASE_URL}/users/logout`) Log out
+    
+    script window.URLROOT = '#{PHP_BASE_URL}'; window.ASSETS_PATH = '#{ASSETS_PATH}';
+    script(src=`${ASSETS_PATH}/js/main.js`)
