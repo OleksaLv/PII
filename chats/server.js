@@ -5,6 +5,7 @@ const bodyParser = require("body-parser");
 const session = require("express-session");
 const cookieParser = require('cookie-parser');
 const fs = require('fs');
+const UserQueries = require('./queries/UserQueries');
 
 const app = express();
 const port = 3000;
@@ -174,4 +175,35 @@ app.get("/messages", requireAuth, (req, res, next) => {
     };
     
     res.status(200).render("messages", payload);
+});
+
+app.get("/create-chat", requireAuth, (req, res, next) => {
+    const crypto = require('crypto');
+    const authToken = crypto.createHash('md5').update(req.user.id + req.user.email + 'cheese and potato').digest('hex');
+    
+    var payload = {
+        pageTitle: "Create Chat",
+        user: req.user,
+        phpSession: req.phpSession,
+        css: ['create-chat.css'],
+        authToken: authToken
+    };
+    
+    res.status(200).render("create-chat", payload);
+});
+
+app.get("/api/search-users", requireAuth, async (req, res) => {
+    try {
+        const searchTerm = req.query.term;
+        
+        if (!searchTerm) {
+            return res.json([]);
+        }
+        
+        const users = await UserQueries.searchUsers(searchTerm, req.user.id);
+        res.json(users);
+    } catch (error) {
+        console.error('Search users error:', error);
+        res.status(500).json({ error: 'Search failed' });
+    }
 });

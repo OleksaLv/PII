@@ -1,0 +1,96 @@
+extends layout
+
+block content
+  section
+    h1 Create Chat
+    #create-chat-container
+      #search-section
+        input(type="text", id="userSearch", placeholder="Search users by name or email...")
+        #search-results
+        
+      #selected-users
+        h3 Selected Users:
+        #selected-users-list
+      
+      #chat-actions
+        button#create-chat-submit Create Chat
+        button#cancel-create(onclick="history.back()") Cancel
+
+    script.
+      // Expose template variables to JavaScript
+      const currentUser = !{JSON.stringify(user)};
+      const authToken = '#{authToken}';
+      const ASSETS_PATH = '#{ASSETS_PATH}';
+      
+      let searchTimeout;
+      let selectedUsers = [];
+      
+      document.getElementById('userSearch').addEventListener('input', function() {
+        const searchTerm = this.value.trim();
+        
+        clearTimeout(searchTimeout);
+        
+        if (searchTerm === '') {
+          document.getElementById('search-results').innerHTML = '';
+          return;
+        }
+        
+        searchTimeout = setTimeout(() => {
+          searchUsers(searchTerm);
+        }, 1000);
+      });
+      
+      function searchUsers(term) {
+        const url = `/api/search-users?term=${encodeURIComponent(term)}&user_id=${currentUser.id}&auth_token=${authToken}`;
+        
+        fetch(url)
+          .then(response => response.json())
+          .then(users => {
+            const resultsDiv = document.getElementById('search-results');
+            resultsDiv.innerHTML = '';
+            
+            users.forEach(foundUser => {
+              // Skip if user is already selected or if it's the current user
+              if (!selectedUsers.find(selected => selected.id === foundUser.id) && foundUser.id !== currentUser.id) {
+                const userDiv = document.createElement('div');
+                userDiv.className = 'search-result-item';
+                userDiv.innerHTML = `
+                  <img src="${ASSETS_PATH}/img/profile.jpg" alt="profile">
+                  <span>${foundUser.first_name} ${foundUser.last_name} (${foundUser.email})</span>
+                `;
+                userDiv.onclick = () => selectUser(foundUser);
+                resultsDiv.appendChild(userDiv);
+              }
+            });
+          });
+      }
+      
+      function selectUser(user) {
+        selectedUsers.push(user);
+        document.getElementById('userSearch').value = '';
+        document.getElementById('search-results').innerHTML = '';
+        updateSelectedUsersList();
+      }
+      
+      function updateSelectedUsersList() {
+        const listDiv = document.getElementById('selected-users-list');
+        listDiv.innerHTML = '';
+        
+        selectedUsers.forEach(user => {
+          const userDiv = document.createElement('div');
+          userDiv.className = 'selected-user-item';
+          userDiv.innerHTML = `
+            <div class="user-info">
+              <img src="${ASSETS_PATH}/img/profile.jpg" alt="profile">
+              <span>${user.first_name} ${user.last_name}</span>
+            </div>
+            <button onclick="removeUser(${user.id})">Remove</button>
+          `;
+          listDiv.appendChild(userDiv);
+        });
+      }
+      
+      function removeUser(userId) {
+        selectedUsers = selectedUsers.filter(user => user.id !== userId);
+        updateSelectedUsersList();
+      }

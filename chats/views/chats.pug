@@ -6,6 +6,7 @@ block content
     #chat-list
       #chat-list-header
         h2 Conversations
+        button#create-chat-btn(onclick=`window.location.href='/create-chat?user_id=${user.id}&auth_token=${authToken}'`, style="background: var(--dark-bg); color: var(--neon-pink); border: 2px solid var(--neon-pink); padding: 0.5rem 1rem; font-size: 0.5rem; text-transform: uppercase; font-family: 'Press Start 2P', monospace; cursor: pointer; box-shadow: 0 0 10px var(--neon-pink); transition: all 0.3s ease;") Create Chat
       #chat-list-content
         .chat-item.active
           img(src=`${ASSETS_PATH}/img/profile.jpg`, alt="profile")
