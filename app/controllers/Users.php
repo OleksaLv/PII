@@ -237,18 +237,31 @@ class Users extends Controller
         $_SESSION['user_gender'] = $user->gender;
         $_SESSION['user_birthday'] = $user->birthday;
         $_SESSION['user_email'] = $user->email;
+        
+        // Set additional session data for Node.js authentication
+        $_SESSION['authenticated'] = true;
+        $_SESSION['auth_time'] = time();
+        $_SESSION['login_hash'] = md5($user->id . $user->email . time()); // Unique login hash
+        
         redirect('students');
     }
 
     public function logout() {
-        unset($_SESSION['user_id']);
-        unset($_SESSION['user_group']);
-        unset($_SESSION['user_first_name']);
-        unset($_SESSION['user_last_name']);
-        unset($_SESSION['user_gender']);
-        unset($_SESSION['user_birthday']);
-        unset($_SESSION['user_email']);
+        $sessionId = session_id();
+        $sessionPath = sys_get_temp_dir() . '/php_sessions/sess_' . $sessionId;
+        $altSessionPath = 'C:\\xampp\\tmp\\sess_' . $sessionId;
+        
+        $_SESSION = array();
         session_destroy();
+        
+        // Clean up session files for Node.js
+        if (file_exists($sessionPath)) {
+            unlink($sessionPath);
+        }
+        if (file_exists($altSessionPath)) {
+            unlink($altSessionPath);
+        }
+        
         redirect('users/login');
     }
 

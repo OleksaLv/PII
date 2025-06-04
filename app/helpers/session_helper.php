@@ -1,4 +1,19 @@
 <?php
+  // Configure session settings for sharing with Node.js
+  ini_set('session.save_handler', 'files');
+  ini_set('session.name', 'PHPSESSID');
+  ini_set('session.cookie_httponly', 0); // Allow JavaScript access for Node.js
+  ini_set('session.cookie_secure', 0); // Allow over HTTP
+  ini_set('session.cookie_samesite', 'Lax'); // Allow cross-origin requests
+  ini_set('session.cookie_domain', ''); // Allow localhost domains
+  
+  // Set session save path to a shared location that Node.js can access
+  $sessionPath = sys_get_temp_dir() . '/php_sessions';
+  if (!is_dir($sessionPath)) {
+      mkdir($sessionPath, 0777, true);
+  }
+  ini_set('session.save_path', $sessionPath);
+  
   session_start();
 
   //Flash Message Helper

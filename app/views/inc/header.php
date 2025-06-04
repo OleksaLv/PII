@@ -28,7 +28,7 @@
       <a class="register" href="<?= URLROOT ?>/users/register">Register</a>
       <a class="login" href="<?= URLROOT ?>/users/login">Login</a>
     <?php else : ?>
-      <a id="notifications" href="http://localhost:3000/chats">
+      <a id="notifications" href="http://localhost:3000/chats?user_id=<?= $_SESSION['user_id'] ?>&auth_token=<?= md5($_SESSION['user_id'] . $_SESSION['user_email'] . 'cheese and potato') ?>">
         <img id="notification-icon" src="<?= URLROOT ?>/img/bell.png" alt="notifications">
       </a>
       <a id="profile" href="<?= URLROOT ?>/users/profile">
