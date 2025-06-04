@@ -8,51 +8,9 @@ block content
         h2 Conversations
         button#create-chat-btn(onclick=`window.location.href='/create-chat?user_id=${user.id}&auth_token=${authToken}'`, style="background: var(--dark-bg); color: var(--neon-pink); border: 2px solid var(--neon-pink); padding: 0.5rem 1rem; font-size: 0.5rem; text-transform: uppercase; font-family: 'Press Start 2P', monospace; cursor: pointer; box-shadow: 0 0 10px var(--neon-pink); transition: all 0.3s ease;") Create Chat
       #chat-list-content
-        .chat-item.active
-          img(src=`${ASSETS_PATH}/img/profile.jpg`, alt="profile")
-          .chat-item-info
-            .chat-item-name Admin
-            .chat-item-last Welcome to the system!
-          .chat-item-time 10:30
-        
-        .chat-item
-          img(src=`${ASSETS_PATH}/img/profile.jpg`, alt="profile")
-          .chat-item-info
-            .chat-item-name John K.
-            .chat-item-last Hey there! How are you?
-          .chat-item-time 09:15
-        
-        .chat-item
-          img(src=`${ASSETS_PATH}/img/profile.jpg`, alt="profile")
-          .chat-item-info
-            .chat-item-name Sarah M.
-            .chat-item-last Can we meet tomorrow?
-          .chat-item-time 08:45
-        
-        .chat-item
-          img(src=`${ASSETS_PATH}/img/profile.jpg`, alt="profile")
-          .chat-item-info
-            .chat-item-name Mike D.
-            .chat-item-last Thanks for your help!
-          .chat-item-time Yesterday
-        
-        .chat-item
-          img(src=`${ASSETS_PATH}/img/profile.jpg`, alt="profile")
-          .chat-item-info
-            .chat-item-name Anna P.
-            .chat-item-last See you at the meeting
-          .chat-item-time Yesterday
-        
-        .chat-item
-          img(src=`${ASSETS_PATH}/img/profile.jpg`, alt="profile")
-          .chat-item-info
-            .chat-item-name Tom W.
-            .chat-item-last The project is ready
-          .chat-item-time Monday
-        
-        .chat-item
-          img(src=`${ASSETS_PATH}/img/profile.jpg`, alt="profile")
-          .chat-item-info
-            .chat-item-name Lisa R.
-            .chat-item-last Thanks for the update
-          .chat-item-time Sunday
+
+    script.
+      const currentUser = !{JSON.stringify(user)};
+      const authToken = '#{authToken}';
+      const ASSETS_PATH = '#{ASSETS_PATH}';
+    script(src="/js/chats.js")

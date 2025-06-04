@@ -6,6 +6,7 @@ const session = require("express-session");
 const cookieParser = require('cookie-parser');
 const fs = require('fs');
 const UserQueries = require('./queries/UserQueries');
+const ChatQueries = require('./queries/ChatQueries');
 
 const app = express();
 const port = 3000;
@@ -13,12 +14,12 @@ const port = 3000;
 const server = app.listen(port, () => console.log("Server listening on port " + port));
 const io = require("socket.io")(server, { pingTimeout: 60000 });
 
-
 app.set("view engine", "pug");
-app.set("views", path.join(__dirname, "views")); // Use absolute path
+app.set("views", path.join(__dirname, "views"));
 
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, "public")));
 
 // Serve PHP public folder assets
@@ -51,12 +52,7 @@ function readPHPSession(sessionId) {
         
         for (const path of paths) {
             if (fs.existsSync(path)) {
-                const sessionData = fs.readFileSync(path, 'utf8');
-                const parsedData = parsePHPSession(sessionData);
-                
-                if (parsedData && parsedData.user_id && parsedData.authenticated) {
-                    return parsedData;
-                }
+                return fs.readFileSync(path, 'utf8');
             }
         }
         return null;
@@ -82,8 +78,6 @@ function parsePHPSession(data) {
             }
         } else if (value.startsWith('i:')) {
             result[key] = parseInt(value.substring(2));
-        } else if (value.startsWith('b:')) {
-            result[key] = value.substring(2) === '1';
         }
     }
     
@@ -93,30 +87,13 @@ function parsePHPSession(data) {
 // Authentication middleware
 async function requireAuth(req, res, next) {
     try {
+        console.log('Auth middleware - Query params:', req.query);
+        
         const userId = req.query.user_id;
         const authToken = req.query.auth_token;
         
         if (!userId || !authToken) {
-            // Fallback to PHP session reading
-            const phpSessionId = req.cookies.PHPSESSID;
-            
-            if (phpSessionId) {
-                const phpSessionData = readPHPSession(phpSessionId);
-                if (phpSessionData && phpSessionData.user_id) {
-                    const user = await Database.getUserById(phpSessionData.user_id);
-                    if (user) {
-                        console.log(`Authentication successful via session: ${user.email}`);
-                        req.user = user;
-                        req.phpSession = phpSessionData;
-                        return next();
-                    }
-                }
-            }
-            
-            if (!req.session.authFailLogged) {
-                console.log('Authentication failed: No valid credentials found, redirecting to login');
-                req.session.authFailLogged = true;
-            }
+            console.log('Missing userId or authToken');
             return res.redirect('http://localhost/pii/users/login');
         }
 
@@ -124,7 +101,7 @@ async function requireAuth(req, res, next) {
         const user = await Database.getUserById(userId);
         
         if (!user) {
-            console.log('Authentication failed: User not found in database, redirecting to login');
+            console.log('User not found in database');
             return res.redirect('http://localhost/pii/users/login');
         }
 
@@ -133,12 +110,11 @@ async function requireAuth(req, res, next) {
         const expectedToken = crypto.createHash('md5').update(user.id + user.email + 'cheese and potato').digest('hex');
         
         if (authToken !== expectedToken) {
-            console.log('Authentication failed: Invalid auth token, redirecting to login');
+            console.log('Invalid auth token');
             return res.redirect('http://localhost/pii/users/login');
         }
 
-        console.log(`Authentication successful via URL parameters: ${user.email}`);
-        req.session.authFailLogged = false;
+        console.log(`Authentication successful: ${user.email}`);
         req.user = user;
         next();
     } catch (error) {
@@ -194,6 +170,7 @@ app.get("/create-chat", requireAuth, (req, res, next) => {
 
 app.get("/api/search-users", requireAuth, async (req, res) => {
     try {
+        console.log('Search users request:', req.query);
         const searchTerm = req.query.term;
         
         if (!searchTerm) {
@@ -201,9 +178,51 @@ app.get("/api/search-users", requireAuth, async (req, res) => {
         }
         
         const users = await UserQueries.searchUsers(searchTerm, req.user.id);
+        console.log('Search users result:', users);
         res.json(users);
     } catch (error) {
         console.error('Search users error:', error);
         res.status(500).json({ error: 'Search failed' });
+    }
+});
+
+app.post("/api/create-chat", requireAuth, async (req, res) => {
+    try {
+        console.log('Create chat request body:', req.body);
+        console.log('Create chat user:', req.user);
+        
+        const { users, isGroupChat } = req.body;
+        
+        if (!users || users.length === 0) {
+            console.log('No users provided');
+            return res.status(400).json({ error: 'At least one user must be selected' });
+        }
+        
+        // Add current user to the chat
+        const allUsers = [...users, req.user.id];
+        console.log('All users for chat:', allUsers);
+        
+        const chat = await ChatQueries.createChat({
+            users: allUsers,
+            isGroupChat: isGroupChat || allUsers.length > 2
+        });
+        
+        console.log('Chat created successfully:', chat);
+        res.json({ success: true, chat });
+    } catch (error) {
+        console.error('Create chat error:', error);
+        res.status(500).json({ error: 'Failed to create chat' });
+    }
+});
+
+app.get("/api/chats", requireAuth, async (req, res) => {
+    try {
+        console.log('Get chats for user:', req.user.id);
+        const chats = await ChatQueries.getUserChats(req.user.id);
+        console.log('Retrieved chats:', chats);
+        res.json(chats);
+    } catch (error) {
+        console.error('Get chats error:', error);
+        res.status(500).json({ error: 'Failed to load chats' });
     }
 });
