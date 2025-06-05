@@ -17,9 +17,27 @@ function loadChats() {
             chats.forEach((chat, index) => {
                 const chatDiv = document.createElement('div');
                 chatDiv.className = `chat-item ${index === 0 ? 'active' : ''}`;
+                chatDiv.style.cursor = 'pointer';
                 
-                const lastMessage = chat.latestMessage ? chat.latestMessage.content : 'No messages yet';
-                const lastMessageTime = chat.latestMessage ? formatTime(chat.latestMessage.createdAt) : '';
+                let lastMessage = 'No messages yet';
+                let lastMessageTime = '';
+                let senderPrefix = '';
+                
+                if (chat.latestMessage) {
+                    lastMessage = chat.latestMessage.content;
+                    lastMessageTime = formatTime(chat.latestMessage.createdAt);
+                    
+                    // Check if the sender is the current user
+                    if (chat.latestMessage.sender == currentUser.id) {
+                        senderPrefix = 'You: ';
+                    } else if (chat.latestMessage.senderDetails) {
+                        senderPrefix = `${chat.latestMessage.senderDetails.first_name}: `;
+                    } else {
+                        senderPrefix = 'Unknown: ';
+                    }
+                    
+                    lastMessage = senderPrefix + lastMessage;
+                }
                 
                 chatDiv.innerHTML = `
                     <img src="${ASSETS_PATH}/img/profile.jpg" alt="profile">
@@ -30,10 +48,15 @@ function loadChats() {
                     <div class="chat-item-time">${lastMessageTime}</div>
                 `;
                 
+                chatDiv.addEventListener('click', () => {
+                    window.location.href = `/messages/${chat._id}?user_id=${currentUser.id}&auth_token=${authToken}`;
+                });
+                
                 chatListContent.appendChild(chatDiv);
             });
         })
         .catch(error => {
+            console.error('Error loading chats:', error);
             const chatListContent = document.getElementById('chat-list-content');
             chatListContent.innerHTML = '<div class="error">Failed to load chats. Please try again.</div>';
         });

@@ -7,6 +7,7 @@ const cookieParser = require('cookie-parser');
 const fs = require('fs');
 const UserQueries = require('./queries/UserQueries');
 const ChatQueries = require('./queries/ChatQueries');
+const MessageQueries = require('./queries/MessageQueries');
 
 const app = express();
 const port = 3000;
@@ -138,19 +139,32 @@ app.get("/chats", requireAuth, (req, res, next) => {
     res.status(200).render("chats", payload);
 });
 
-app.get("/messages", requireAuth, (req, res, next) => {
-    const crypto = require('crypto');
-    const authToken = crypto.createHash('md5').update(req.user.id + req.user.email + 'cheese and potato').digest('hex');
-    
-    var payload = {
-        pageTitle: "Messages",
-        user: req.user,
-        phpSession: req.phpSession,
-        css: ['messages.css'],
-        authToken: authToken
-    };
-    
-    res.status(200).render("messages", payload);
+app.get("/messages/:chatId", requireAuth, async (req, res, next) => {
+    try {
+        const chatId = req.params.chatId;
+        const chat = await ChatQueries.getChatById(chatId);
+        
+        if (!chat || !chat.users.includes(req.user.id)) {
+            return res.redirect(`/chats?user_id=${req.user.id}&auth_token=${req.query.auth_token}`);
+        }
+        
+        const crypto = require('crypto');
+        const authToken = crypto.createHash('md5').update(req.user.id + req.user.email + 'cheese and potato').digest('hex');
+        
+        var payload = {
+            pageTitle: "Messages",
+            user: req.user,
+            phpSession: req.phpSession,
+            css: ['messages.css'],
+            authToken: authToken,
+            chat: chat
+        };
+        
+        res.status(200).render("messages", payload);
+    } catch (error) {
+        console.error('Error loading messages:', error);
+        res.redirect(`/chats?user_id=${req.user.id}&auth_token=${req.query.auth_token}`);
+    }
 });
 
 app.get("/create-chat", requireAuth, (req, res, next) => {
@@ -225,4 +239,58 @@ app.get("/api/chats", requireAuth, async (req, res) => {
         console.error('Get chats error:', error);
         res.status(500).json({ error: 'Failed to load chats' });
     }
+});
+
+app.get("/api/messages/:chatId", requireAuth, async (req, res) => {
+    try {
+        const chatId = req.params.chatId;
+        const messages = await MessageQueries.getChatMessages(chatId);
+        res.json(messages);
+    } catch (error) {
+        console.error('Get messages error:', error);
+        res.status(500).json({ error: 'Failed to load messages' });
+    }
+});
+
+// Socket.io connection handling
+io.on('connection', (socket) => {
+    console.log('User connected:', socket.id);
+    
+    socket.on('join-chat', (chatId) => {
+        socket.join(chatId);
+        console.log(`User ${socket.id} joined chat ${chatId}`);
+    });
+    
+    socket.on('send-message', async (data) => {
+        try {
+            const { chatId, content, userId } = data;
+            const message = await MessageQueries.createMessage({
+                sender: userId,
+                content: content,
+                chat: chatId
+            });
+            
+            // Update chat's latest message and timestamp
+            const Chat = require('./schemas/ChatSchema');
+            await Chat.findByIdAndUpdate(chatId, { 
+                latestMessage: message._id,
+                updatedAt: new Date()
+            });
+            
+            // Convert mongoose document to plain object to include senderDetails
+            const messageObject = message.toObject();
+            messageObject.senderDetails = message.senderDetails;
+            
+            console.log('Message sent and chat updated:', { chatId, messageId: message._id });
+            
+            // Broadcast to all users in the chat room
+            io.to(chatId).emit('new-message', messageObject);
+        } catch (error) {
+            console.error('Send message error:', error);
+        }
+    });
+    
+    socket.on('disconnect', () => {
+        console.log('User disconnected:', socket.id);
+    });
 });

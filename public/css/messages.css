@@ -51,6 +51,8 @@ h1 {
     box-shadow: 0 0 15px var(--neon-blue);
     background-color: rgba(0, 0, 51, 0.7);
     min-width: 0;
+    height: 70vh;
+    max-height: 500px;
 }
 
 /* Chat Header */
@@ -61,6 +63,7 @@ h1 {
     display: flex;
     align-items: center;
     gap: 0.8rem;
+    flex-shrink: 0;
 }
 
 #chat-header img {
@@ -91,6 +94,38 @@ h1 {
     display: flex;
     flex-direction: column;
     gap: 1rem;
+    min-height: 0;
+}
+
+/* Custom scrollbar for messages */
+#chat-messages::-webkit-scrollbar {
+    width: 12px;
+}
+
+#chat-messages::-webkit-scrollbar-track {
+    background: rgba(0, 255, 255, 0.1);
+    border-radius: 6px;
+}
+
+#chat-messages::-webkit-scrollbar-thumb {
+    background: var(--neon-cyan);
+    border-radius: 6px;
+    box-shadow: 0 0 10px var(--neon-cyan);
+}
+
+#chat-messages::-webkit-scrollbar-thumb:hover {
+    background: var(--neon-pink);
+    box-shadow: 0 0 15px var(--neon-pink);
+}
+
+/* No messages text */
+.no-messages {
+    text-align: center;
+    color: var(--neon-cyan);
+    font-style: italic;
+    margin-top: 2rem;
+    text-shadow: 0 0 5px var(--neon-cyan);
+    font-size: 0.8rem;
 }
 
 /* Message Styling */
@@ -151,6 +186,7 @@ h1 {
     gap: 0.5rem;
     border-top: 2px solid var(--neon-blue);
     background-color: rgba(0, 255, 255, 0.05);
+    flex-shrink: 0;
 }
 
 #messageInput {
