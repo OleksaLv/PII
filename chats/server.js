@@ -13,8 +13,28 @@ const NotificationQueries = require('./queries/NotificationQueries');
 const app = express();
 const port = 3000;
 
+// Add CORS middleware
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', 'http://localhost');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+    res.header('Access-Control-Allow-Credentials', true);
+    
+    if (req.method === 'OPTIONS') {
+        res.sendStatus(200);
+    } else {
+        next();
+    }
+});
+
 const server = app.listen(port, () => console.log("Server listening on port " + port));
-const io = require("socket.io")(server, { pingTimeout: 60000 });
+const io = require("socket.io")(server, { 
+    pingTimeout: 60000,
+    cors: {
+        origin: "http://localhost",
+        methods: ["GET", "POST"]
+    }
+});
 
 // Track online users by chat
 const onlineUsersByChat = new Map();
@@ -88,20 +108,16 @@ function parsePHPSession(data) {
 
 async function requireAuth(req, res, next) {
     try {
-        console.log('Auth middleware - Query params:', req.query);
-        
         const userId = req.query.user_id;
         const authToken = req.query.auth_token;
         
         if (!userId || !authToken) {
-            console.log('Missing userId or authToken');
             return res.redirect('http://localhost/pii/users/login');
         }
 
         const user = await Database.getUserById(userId);
         
         if (!user) {
-            console.log('User not found in database');
             return res.redirect('http://localhost/pii/users/login');
         }
 
@@ -109,11 +125,10 @@ async function requireAuth(req, res, next) {
         const expectedToken = crypto.createHash('md5').update(user.id + user.email + 'cheese and potato').digest('hex');
         
         if (authToken !== expectedToken) {
-            console.log('Invalid auth token');
             return res.redirect('http://localhost/pii/users/login');
         }
 
-        console.log(`Authentication successful: ${user.email}`);
+        console.log(`User authenticated: ${user.email}`);
         req.user = user;
         next();
     } catch (error) {
@@ -182,7 +197,6 @@ app.get("/create-chat", requireAuth, (req, res, next) => {
 
 app.get("/api/search-users", requireAuth, async (req, res) => {
     try {
-        console.log('Search users request:', req.query);
         const searchTerm = req.query.term;
         
         if (!searchTerm) {
@@ -190,7 +204,6 @@ app.get("/api/search-users", requireAuth, async (req, res) => {
         }
         
         const users = await UserQueries.searchUsers(searchTerm, req.user.id);
-        console.log('Search users result:', users);
         res.json(users);
     } catch (error) {
         console.error('Search users error:', error);
@@ -200,25 +213,20 @@ app.get("/api/search-users", requireAuth, async (req, res) => {
 
 app.post("/api/create-chat", requireAuth, async (req, res) => {
     try {
-        console.log('Create chat request body:', req.body);
-        console.log('Create chat user:', req.user);
-        
         const { users, isGroupChat } = req.body;
         
         if (!users || users.length === 0) {
-            console.log('No users provided');
             return res.status(400).json({ error: 'At least one user must be selected' });
         }
         
         const allUsers = [...users, req.user.id];
-        console.log('All users for chat:', allUsers);
         
         const chat = await ChatQueries.createChat({
             users: allUsers,
             isGroupChat: isGroupChat || allUsers.length > 2
         });
         
-        console.log('Chat created successfully:', chat);
+        console.log(`Chat created by ${req.user.email}`);
         res.json({ success: true, chat });
     } catch (error) {
         console.error('Create chat error:', error);
@@ -228,9 +236,7 @@ app.post("/api/create-chat", requireAuth, async (req, res) => {
 
 app.get("/api/chats", requireAuth, async (req, res) => {
     try {
-        console.log('Get chats for user:', req.user.id);
         const chats = await ChatQueries.getUserChats(req.user.id);
-        console.log('Retrieved chats:', chats);
         res.json(chats);
     } catch (error) {
         console.error('Get chats error:', error);
@@ -263,7 +269,6 @@ app.get("/api/online-users/:chatId", requireAuth, async (req, res) => {
 app.get("/api/notifications", requireAuth, async (req, res) => {
     try {
         const notifications = await NotificationQueries.getUserNotifications(req.user.id);
-        console.log('Retrieved notifications for user:', req.user.id, notifications);
         res.json(notifications);
     } catch (error) {
         console.error('Get notifications error:', error);
@@ -283,16 +288,15 @@ app.delete("/api/notifications/:notificationId", requireAuth, async (req, res) =
 });
 
 io.on('connection', (socket) => {
-    console.log('User connected:', socket.id);
+    console.log('User connected');
     
     socket.on('user-connect', (data) => {
         const { userId } = data;
         socket.userId = userId;
         userSockets.set(userId, socket);
         
-        // Join user to their personal notification room
         socket.join(`user_${userId}`);
-        console.log(`User ${userId} joined their notification room user_${userId}`);
+        console.log(`User ${userId} joined notification room`);
     });
     
     socket.on('join-chat', (data) => {
@@ -301,18 +305,17 @@ io.on('connection', (socket) => {
         socket.userId = userId;
         socket.chatId = chatId;
         
-        // Add user to online users for this chat
         if (!onlineUsersByChat.has(chatId)) {
             onlineUsersByChat.set(chatId, new Set());
         }
         onlineUsersByChat.get(chatId).add(userId);
         
-        console.log(`User ${userId} (${socket.id}) joined chat ${chatId}`);
         socket.to(chatId).emit('user-joined', userId);
         
-        // Send current online users to the newly joined user
         const onlineUsers = Array.from(onlineUsersByChat.get(chatId));
         socket.emit('online-users', onlineUsers);
+        
+        console.log(`User ${userId} joined chat ${chatId}`);
     });
     
     socket.on('send-message', async (data) => {
@@ -327,7 +330,7 @@ io.on('connection', (socket) => {
             });
             
             const Chat = require('./schemas/ChatSchema');
-            const chat = await Chat.findByIdAndUpdate(chatId, { 
+            await Chat.findByIdAndUpdate(chatId, { 
                 latestMessage: message._id,
                 updatedAt: new Date()
             });
@@ -335,27 +338,18 @@ io.on('connection', (socket) => {
             const messageObject = message.toObject();
             messageObject.senderDetails = message.senderDetails;
             
-            console.log('Message sent and chat updated:', { chatId, messageId: message._id });
-            
-            // Send message to all users in the chat
             io.to(chatId).emit('new-message', messageObject);
             
-            // Get chat details for notification
+            console.log(`Message sent: "${content}"`);
+            
             const chatDetails = await ChatQueries.getChatById(chatId);
-            
-            // Get users who are currently in this specific chat
             const usersInChat = onlineUsersByChat.get(chatId) || new Set();
-            console.log(`Users currently in chat ${chatId}:`, Array.from(usersInChat));
             
-            // Create notifications for users who are NOT in the chat room
             for (const chatUserId of chatDetails.users) {
-                if (chatUserId !== userId) { // Don't notify the sender
+                if (chatUserId !== userId) {
                     const isUserInChat = usersInChat.has(chatUserId);
                     
                     if (!isUserInChat) {
-                        // User is either offline or online but not in this chat
-                        console.log(`User ${chatUserId} is not in chat ${chatId}, creating notification`);
-                        
                         const notification = await NotificationQueries.createNotification({
                             userId: chatUserId,
                             chatId: chatId,
@@ -364,20 +358,12 @@ io.on('connection', (socket) => {
                             content: content
                         });
                         
-                        console.log('Created notification for user not in chat:', chatUserId);
-                        
-                        // Send notification to user's personal room if they're connected
                         const notificationObject = notification.toObject();
                         notificationObject.senderDetails = notification.senderDetails;
                         
-                        console.log(`Sending notification to room user_${chatUserId}:`, notificationObject);
                         io.to(`user_${chatUserId}`).emit('new-notification', notificationObject);
                         
-                        // Check if user is connected to their notification room
-                        const roomSockets = io.sockets.adapter.rooms.get(`user_${chatUserId}`);
-                        console.log(`Sockets in room user_${chatUserId}:`, roomSockets ? Array.from(roomSockets) : 'No sockets');
-                    } else {
-                        console.log(`User ${chatUserId} is currently in chat ${chatId}, no notification needed`);
+                        console.log(`Notification sent to user ${chatUserId}`);
                     }
                 }
             }
@@ -388,9 +374,9 @@ io.on('connection', (socket) => {
     });
     
     socket.on('disconnect', () => {
-        console.log('User disconnected:', socket.id);
+        console.log('User disconnected');
+        
         if (socket.userId && socket.chatId) {
-            // Remove user from online users for this chat
             if (onlineUsersByChat.has(socket.chatId)) {
                 onlineUsersByChat.get(socket.chatId).delete(socket.userId);
                 if (onlineUsersByChat.get(socket.chatId).size === 0) {
