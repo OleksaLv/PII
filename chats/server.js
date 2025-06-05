@@ -8,6 +8,7 @@ const fs = require('fs');
 const UserQueries = require('./queries/UserQueries');
 const ChatQueries = require('./queries/ChatQueries');
 const MessageQueries = require('./queries/MessageQueries');
+const NotificationQueries = require('./queries/NotificationQueries');
 
 const app = express();
 const port = 3000;
@@ -17,6 +18,8 @@ const io = require("socket.io")(server, { pingTimeout: 60000 });
 
 // Track online users by chat
 const onlineUsersByChat = new Map();
+// Track user sockets by user ID
+const userSockets = new Map();
 
 app.set("view engine", "pug");
 app.set("views", path.join(__dirname, "views"));
@@ -257,8 +260,40 @@ app.get("/api/online-users/:chatId", requireAuth, async (req, res) => {
     }
 });
 
+app.get("/api/notifications", requireAuth, async (req, res) => {
+    try {
+        const notifications = await NotificationQueries.getUserNotifications(req.user.id);
+        console.log('Retrieved notifications for user:', req.user.id, notifications);
+        res.json(notifications);
+    } catch (error) {
+        console.error('Get notifications error:', error);
+        res.status(500).json({ error: 'Failed to load notifications' });
+    }
+});
+
+app.delete("/api/notifications/:notificationId", requireAuth, async (req, res) => {
+    try {
+        const notificationId = req.params.notificationId;
+        await NotificationQueries.deleteNotification(notificationId);
+        res.json({ success: true });
+    } catch (error) {
+        console.error('Delete notification error:', error);
+        res.status(500).json({ error: 'Failed to delete notification' });
+    }
+});
+
 io.on('connection', (socket) => {
     console.log('User connected:', socket.id);
+    
+    socket.on('user-connect', (data) => {
+        const { userId } = data;
+        socket.userId = userId;
+        userSockets.set(userId, socket);
+        
+        // Join user to their personal notification room
+        socket.join(`user_${userId}`);
+        console.log(`User ${userId} joined their notification room user_${userId}`);
+    });
     
     socket.on('join-chat', (data) => {
         const { chatId, userId } = data;
@@ -292,7 +327,7 @@ io.on('connection', (socket) => {
             });
             
             const Chat = require('./schemas/ChatSchema');
-            await Chat.findByIdAndUpdate(chatId, { 
+            const chat = await Chat.findByIdAndUpdate(chatId, { 
                 latestMessage: message._id,
                 updatedAt: new Date()
             });
@@ -302,7 +337,51 @@ io.on('connection', (socket) => {
             
             console.log('Message sent and chat updated:', { chatId, messageId: message._id });
             
+            // Send message to all users in the chat
             io.to(chatId).emit('new-message', messageObject);
+            
+            // Get chat details for notification
+            const chatDetails = await ChatQueries.getChatById(chatId);
+            
+            // Get users who are currently in this specific chat
+            const usersInChat = onlineUsersByChat.get(chatId) || new Set();
+            console.log(`Users currently in chat ${chatId}:`, Array.from(usersInChat));
+            
+            // Create notifications for users who are NOT in the chat room
+            for (const chatUserId of chatDetails.users) {
+                if (chatUserId !== userId) { // Don't notify the sender
+                    const isUserInChat = usersInChat.has(chatUserId);
+                    
+                    if (!isUserInChat) {
+                        // User is either offline or online but not in this chat
+                        console.log(`User ${chatUserId} is not in chat ${chatId}, creating notification`);
+                        
+                        const notification = await NotificationQueries.createNotification({
+                            userId: chatUserId,
+                            chatId: chatId,
+                            messageId: message._id,
+                            senderId: userId,
+                            content: content
+                        });
+                        
+                        console.log('Created notification for user not in chat:', chatUserId);
+                        
+                        // Send notification to user's personal room if they're connected
+                        const notificationObject = notification.toObject();
+                        notificationObject.senderDetails = notification.senderDetails;
+                        
+                        console.log(`Sending notification to room user_${chatUserId}:`, notificationObject);
+                        io.to(`user_${chatUserId}`).emit('new-notification', notificationObject);
+                        
+                        // Check if user is connected to their notification room
+                        const roomSockets = io.sockets.adapter.rooms.get(`user_${chatUserId}`);
+                        console.log(`Sockets in room user_${chatUserId}:`, roomSockets ? Array.from(roomSockets) : 'No sockets');
+                    } else {
+                        console.log(`User ${chatUserId} is currently in chat ${chatId}, no notification needed`);
+                    }
+                }
+            }
+            
         } catch (error) {
             console.error('Send message error:', error);
         }
@@ -319,6 +398,10 @@ io.on('connection', (socket) => {
                 }
             }
             socket.to(socket.chatId).emit('user-left', socket.userId);
+        }
+        
+        if (socket.userId) {
+            userSockets.delete(socket.userId);
         }
     });
 });

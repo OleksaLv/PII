@@ -115,6 +115,10 @@ header #notifications::after {
     background-color: var(--neon-green);
     border-radius: 50%;
     box-shadow: 0 0 5px var(--neon-green);
+    opacity: 0;
+}
+
+header #notifications.has-notifications::after {
     animation: blink 1.5s 3;
 }
 

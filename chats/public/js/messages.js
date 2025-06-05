@@ -2,6 +2,9 @@ const socket = io();
 const onlineUsers = new Set();
 
 document.addEventListener('DOMContentLoaded', function() {
+    // Connect user to their notification room
+    socket.emit('user-connect', { userId: currentUser.id });
+    
     socket.emit('join-chat', { chatId, userId: currentUser.id });
     loadMessages();
     loadChatUsers();
