@@ -2,13 +2,15 @@ extends layout
 
 block content
   section
-    h1= chat.chatName
+    #chat-room
+      h3 Chat room
+      #users-list
+    
     #chat-container
       #chat-header
         img(src=`${ASSETS_PATH}/img/profile.jpg`, alt="profile")
         #chat-header-info
           h3= chat.chatName
-          .status Online
       
       #chat-messages
       
@@ -21,5 +23,6 @@ block content
       const authToken = '#{authToken}';
       const chatId = '#{chat._id}';
       const ASSETS_PATH = '#{ASSETS_PATH}';
+      const chatUsers = !{JSON.stringify(chat.userDetails || [])};
     script(src="/socket.io/socket.io.js")
     script(src="/js/messages.js")

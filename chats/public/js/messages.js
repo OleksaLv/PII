@@ -1,8 +1,10 @@
 const socket = io();
+const onlineUsers = new Set();
 
 document.addEventListener('DOMContentLoaded', function() {
-    socket.emit('join-chat', chatId);
+    socket.emit('join-chat', { chatId, userId: currentUser.id });
     loadMessages();
+    loadChatUsers();
     
     const sendButton = document.getElementById('sendButton');
     const messageInput = document.getElementById('messageInput');
@@ -15,7 +17,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     socket.on('new-message', function(message) {
-        // Remove "no messages" text if it exists
         const noMessages = document.querySelector('.no-messages');
         if (noMessages) {
             noMessages.remove();
@@ -23,7 +24,49 @@ document.addEventListener('DOMContentLoaded', function() {
         displayMessage(message);
         scrollToBottom();
     });
+    
+    socket.on('user-joined', function(userId) {
+        onlineUsers.add(userId);
+        updateUserStatus(userId, true);
+    });
+    
+    socket.on('user-left', function(userId) {
+        onlineUsers.delete(userId);
+        updateUserStatus(userId, false);
+    });
+    
+    socket.on('online-users', function(users) {
+        users.forEach(userId => {
+            onlineUsers.add(userId);
+            updateUserStatus(userId, true);
+        });
+    });
 });
+
+function loadChatUsers() {
+    const usersList = document.getElementById('users-list');
+    chatUsers.forEach(user => {
+        const userItem = document.createElement('div');
+        userItem.className = 'user-item';
+        userItem.dataset.userId = user.id;
+        
+        userItem.innerHTML = `
+            <img src="${ASSETS_PATH}/img/profile.jpg" alt="profile">
+            <span class="user-name">${user.first_name} ${user.last_name}</span>
+            <div class="user-status"></div>
+        `;
+        
+        usersList.appendChild(userItem);
+    });
+}
+
+function updateUserStatus(userId, isOnline) {
+    const userItem = document.querySelector(`[data-user-id="${userId}"]`);
+    if (userItem) {
+        const statusElement = userItem.querySelector('.user-status');
+        statusElement.className = `user-status ${isOnline ? 'online' : ''}`;
+    }
+}
 
 function loadMessages() {
     fetch(`/api/messages/${chatId}?user_id=${currentUser.id}&auth_token=${authToken}`)

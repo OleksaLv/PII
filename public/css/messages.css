@@ -13,7 +13,8 @@ section {
     background-color: var(--grid-bg);
     position: relative;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    gap: 1rem;
 }
 
 /* Grid Background */
@@ -31,15 +32,64 @@ section::before {
     z-index: -1;
 }
 
-/* Page Title */
-h1 {
-    margin: 0 0 1rem 0;
-    color: var(--neon-pink);
-    font-size: 1.8rem;
+/* Chat Room Users */
+#chat-room {
+    width: 200px;
+    border: 3px solid var(--neon-yellow);
+    box-shadow: 0 0 15px var(--neon-yellow);
+    background-color: rgba(255, 255, 0, 0.1);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+#chat-room h3 {
+    margin: 0;
+    padding: 1rem;
+    color: var(--neon-yellow);
+    font-size: 0.7rem;
     text-transform: uppercase;
-    text-shadow: 0 2px 4px var(--neon-pink);
-    border-bottom: 2px solid var(--neon-pink);
-    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--neon-yellow);
+    background-color: rgba(255, 255, 0, 0.2);
+}
+
+#users-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0.5rem;
+}
+
+.user-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    border-bottom: 1px solid rgba(255, 255, 0, 0.3);
+    font-size: 0.6rem;
+}
+
+.user-item img {
+    width: 1.5rem;
+    height: 1.5rem;
+    image-rendering: pixelated;
+}
+
+.user-name {
+    color: var(--neon-green);
+    flex: 1;
+}
+
+.user-status {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #ff0000;
+    box-shadow: 0 0 5px #ff0000;
+}
+
+.user-status.online {
+    background-color: var(--neon-green);
+    box-shadow: 0 0 5px var(--neon-green);
 }
 
 /* Chat Container */
@@ -51,8 +101,7 @@ h1 {
     box-shadow: 0 0 15px var(--neon-blue);
     background-color: rgba(0, 0, 51, 0.7);
     min-width: 0;
-    height: 70vh;
-    max-height: 500px;
+    height: 100%;
 }
 
 /* Chat Header */
@@ -78,12 +127,6 @@ h1 {
     color: var(--neon-blue);
     font-size: 0.8rem;
     text-transform: uppercase;
-}
-
-#chat-header-info .status {
-    color: var(--neon-green);
-    font-size: 0.6rem;
-    margin-top: 0.2rem;
 }
 
 /* Messages Area */
@@ -224,10 +267,6 @@ h1 {
     
     section {
         padding: 2rem;
-    }
-    
-    h1 {
-        font-size: 2.2rem;
     }
     
     .message-content,

@@ -15,6 +15,9 @@ const port = 3000;
 const server = app.listen(port, () => console.log("Server listening on port " + port));
 const io = require("socket.io")(server, { pingTimeout: 60000 });
 
+// Track online users by chat
+const onlineUsersByChat = new Map();
+
 app.set("view engine", "pug");
 app.set("views", path.join(__dirname, "views"));
 
@@ -23,14 +26,11 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, "public")));
 
-// Serve PHP public folder assets
 app.use('/assets', express.static(path.join(__dirname, '..', 'public')));
 
-// Global variables for templates
 app.locals.ASSETS_PATH = '/assets';
 app.locals.PHP_BASE_URL = 'http://localhost/pii';
 
-// Configure session with PHP-compatible settings
 app.use(session({
     name: 'nodejs_session',
     secret: "cheese and potato",
@@ -39,11 +39,10 @@ app.use(session({
     cookie: {
         httpOnly: false,
         secure: false,
-        maxAge: 24 * 60 * 60 * 1000 // 24 hours
+        maxAge: 24 * 60 * 60 * 1000
     }
 }));
 
-// Function to read PHP session data
 function readPHPSession(sessionId) {
     try {
         const paths = [
@@ -62,7 +61,6 @@ function readPHPSession(sessionId) {
     }
 }
 
-// Function to parse PHP session data format
 function parsePHPSession(data) {
     const result = {};
     const regex = /(\w+)\|([^}]+}|[^;]+);/g;
@@ -85,7 +83,6 @@ function parsePHPSession(data) {
     return result;
 }
 
-// Authentication middleware
 async function requireAuth(req, res, next) {
     try {
         console.log('Auth middleware - Query params:', req.query);
@@ -98,7 +95,6 @@ async function requireAuth(req, res, next) {
             return res.redirect('http://localhost/pii/users/login');
         }
 
-        // Validate user exists in SQL database
         const user = await Database.getUserById(userId);
         
         if (!user) {
@@ -106,7 +102,6 @@ async function requireAuth(req, res, next) {
             return res.redirect('http://localhost/pii/users/login');
         }
 
-        // Validate auth token
         const crypto = require('crypto');
         const expectedToken = crypto.createHash('md5').update(user.id + user.email + 'cheese and potato').digest('hex');
         
@@ -212,7 +207,6 @@ app.post("/api/create-chat", requireAuth, async (req, res) => {
             return res.status(400).json({ error: 'At least one user must be selected' });
         }
         
-        // Add current user to the chat
         const allUsers = [...users, req.user.id];
         console.log('All users for chat:', allUsers);
         
@@ -252,38 +246,62 @@ app.get("/api/messages/:chatId", requireAuth, async (req, res) => {
     }
 });
 
-// Socket.io connection handling
+app.get("/api/online-users/:chatId", requireAuth, async (req, res) => {
+    try {
+        const chatId = req.params.chatId;
+        const onlineUsers = onlineUsersByChat.get(chatId) || new Set();
+        res.json(Array.from(onlineUsers));
+    } catch (error) {
+        console.error('Get online users error:', error);
+        res.status(500).json({ error: 'Failed to load online users' });
+    }
+});
+
 io.on('connection', (socket) => {
     console.log('User connected:', socket.id);
     
-    socket.on('join-chat', (chatId) => {
+    socket.on('join-chat', (data) => {
+        const { chatId, userId } = data;
         socket.join(chatId);
-        console.log(`User ${socket.id} joined chat ${chatId}`);
+        socket.userId = userId;
+        socket.chatId = chatId;
+        
+        // Add user to online users for this chat
+        if (!onlineUsersByChat.has(chatId)) {
+            onlineUsersByChat.set(chatId, new Set());
+        }
+        onlineUsersByChat.get(chatId).add(userId);
+        
+        console.log(`User ${userId} (${socket.id}) joined chat ${chatId}`);
+        socket.to(chatId).emit('user-joined', userId);
+        
+        // Send current online users to the newly joined user
+        const onlineUsers = Array.from(onlineUsersByChat.get(chatId));
+        socket.emit('online-users', onlineUsers);
     });
     
     socket.on('send-message', async (data) => {
         try {
             const { chatId, content, userId } = data;
+            socket.userId = userId;
+            
             const message = await MessageQueries.createMessage({
                 sender: userId,
                 content: content,
                 chat: chatId
             });
             
-            // Update chat's latest message and timestamp
             const Chat = require('./schemas/ChatSchema');
             await Chat.findByIdAndUpdate(chatId, { 
                 latestMessage: message._id,
                 updatedAt: new Date()
             });
             
-            // Convert mongoose document to plain object to include senderDetails
             const messageObject = message.toObject();
             messageObject.senderDetails = message.senderDetails;
             
             console.log('Message sent and chat updated:', { chatId, messageId: message._id });
             
-            // Broadcast to all users in the chat room
             io.to(chatId).emit('new-message', messageObject);
         } catch (error) {
             console.error('Send message error:', error);
@@ -292,5 +310,15 @@ io.on('connection', (socket) => {
     
     socket.on('disconnect', () => {
         console.log('User disconnected:', socket.id);
+        if (socket.userId && socket.chatId) {
+            // Remove user from online users for this chat
+            if (onlineUsersByChat.has(socket.chatId)) {
+                onlineUsersByChat.get(socket.chatId).delete(socket.userId);
+                if (onlineUsersByChat.get(socket.chatId).size === 0) {
+                    onlineUsersByChat.delete(socket.chatId);
+                }
+            }
+            socket.to(socket.chatId).emit('user-left', socket.userId);
+        }
     });
 });
